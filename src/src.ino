@@ -1,10 +1,10 @@
 /*
-  emonTH Low Power DHT22 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
+  emonTH Low Power SI7021 / DHT22 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
 
-  Checkes at startup for presence of a DS18B20 temp sensor , DHT22 (temp + humidity) or both
-  If it finds both sensors the temperature value will be taken from the DS18B20 (external) and DHT22 (internal) and humidity from DHT22
+  Checkes at startup for presence of a DS18B20 temp sensor , DHT22 or SI7021 (temp + humidity)
+  If it finds both DHT22 or SI7021 & DS18B20  sensors the temperature value will be taken from the DS18B20 (external) and DHT22 / SI7021 (internal) and humidity from DHT22
   If it finds only DS18B20 then no humidity value will be reported
-  If it finds only a DHT22 then both temperature and humidity values will be obtained from this sesor
+  If it finds only a DHT22 / SI7021 then both temperature and humidity values will be obtained from this sensor
 
   Technical hardware documentation wiki: http://wiki.openenergymonitor.org/index.php?title=EmonTH
 
@@ -16,11 +16,10 @@
 
   THIS SKETCH REQUIRES:
 
-  Libraries in the standard arduino libraries folder:
-  - JeeLib		        https://github.com/jcw/jeelib
-  - DHT22 Sensor Library  https://github.com/adafruit/DHT-sensor-library - be sure to rename the sketch folder to remove the '-'
-  - OneWire library	    http://www.pjrc.com/teensy/td_libs_OneWire.html
-  - DallasTemperature	    http://download.milesburton.com/Arduino/MaximTemperature/DallasTemperature_LATEST.zip
+  Libraries required:
+   - see platformio.ini
+   - recommend compiling with platformIO for auto library download
+   - Arduno IDE can be used to compile but libs will need to be manually downloaded
 
   Recommended node ID allocation
   -----------------------------------------------------------------------------------------------------------
@@ -34,16 +33,16 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
-  v2.1 - Branched from emonTH_DHT22_DS18B20 example, first version of pulse counting version
-  v2.2 - 60s RF transmit period now uses timer1, pulse events are decoupled from RF transmit
-  v2.3 - rebuilt based on low power pulse counting code by Eric Amann: http://openenergymonitor.org/emon/node/10834
-  v2.4 - 5 min default transmisson time = 300 ms
-  v2.3 - (12/10/14) don't flash LED on RF transmission to save power
-  V2.4 - (15/10/15) activate pulse count pin input pullup to stop spurious pulses when no sensor connected
-  V2.5 - (23/10/15) default nodeID 23 to enable new emonHub.conf decoder for pulseCount packet structure
-  V2.6 - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
-  V2.7 - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
-  V3.0 - (15/09/16) Add support for SI7021 sensor (emonTH V2.0 hardware)
+  V3.0   - (15/09/16) Add support for SI7021 sensor (emonTH V2.0 hardware)
+  V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
+  V2.6   - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
+  V2.5   - (23/10/15) default nodeID 23 to enable new emonHub.conf decoder for pulseCount packet structure
+  V2.4   - (15/10/15) activate pulse count pin input pullup to stop spurious pulses when no sensor connected
+  v2.3.1 - (12/10/14) don't flash LED on RF transmission to save power
+  v2.3   - rebuilt based on low power pulse counting code by Eric Amann: http://openenergymonitor.org/emon/node/10834
+  v2.2   - 60s RF transmit period now uses timer1, pulse events are decoupled from RF transmit
+  v2.4   - 5 min default transmisson time = 300 ms
+  v2.1   - Branched from emonTH_DHT22_DS18B20 example, first version of pulse counting version
  -------------------------------------------------------------------------------------------------------------
   emonhub.conf node decoder:
   See: https://github.com/openenergymonitor/emonhub/blob/emon-pi/configuration.md
@@ -58,6 +57,7 @@
          scales = 0.1,0.1,0.1,0.1,1
          units = C,C,%,V,p
   */
+// -------------------------------------------------------------------------------------------------------------
 
 const byte version = 30;         // firmware version divided by 10 e,g 16 = V1.6
                                                                       // These variables control the transmit timing of the emonTH
