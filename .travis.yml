@@ -17,7 +17,7 @@ deploy:
   skip_cleanup: true
   provider: releases
   overwrite: true
-  file: ".pioenvs/emonth2/emonth2.hex"
+  file: ".pioenvs/emonth2/firmware.hex"
 
 
 ## Setup auto depoly .hex on release tag
