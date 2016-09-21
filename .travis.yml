@@ -1,0 +1,27 @@
+language: python
+python:
+- '2.7'
+sudo: false
+cache:
+  directories:
+  - "~/.platformio"
+install:
+- pip install -U platformio
+script:
+- platformio run
+deploy:
+  on:
+    repo: openenergymonitor/emonth2
+    all_branches: true
+    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
+  skip_cleanup: true
+  provider: releases
+  overwrite: true
+  file: ".pioenvs/emonth2/emonth2.hex"
+
+
+## Setup auto depoly .hex on release tag
+# sudo gem install travis
+# cd into repo
+# $ travis setup releases
+# folow prompts..depoly section will be populated
