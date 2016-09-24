@@ -142,6 +142,7 @@ unsigned long now = 0;
 
 //################################################################################################################################
 //################################################################################################################################
+#ifndef UNIT_TEST // IMPORTANT LINE! // http://docs.platformio.org/en/stable/plus/unit-testing.html
 void setup() {
 //################################################################################################################################
 
@@ -438,3 +439,6 @@ void onPulse()
   p=1;                                       // flag for new pulse set to true
   pulseCount++;                              // number of pulses since the last RF sent
 }
+
+#endif    // IMPORTANT LINE! end unit test
+//http://docs.platformio.org/en/stable/plus/unit-testing.html
