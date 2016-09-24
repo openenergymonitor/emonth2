@@ -46,7 +46,7 @@
  -------------------------------------------------------------------------------------------------------------
   emonhub.conf node decoder:
   See: https://github.com/openenergymonitor/emonhub/blob/emon-pi/configuration.md
-  
+
     [[23]]
       nodename = emonTH_5
       firmware = V2.x_emonTH_DHT22_DS18B20_RFM69CW_Pulse
@@ -175,7 +175,7 @@ void setup() {
   rf12_sleep(RF12_SLEEP);
   if (debug==1)
   {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.print(DIP1); Serial.println(DIP2);
     Serial.println("OpenEnergyMonitor.org");
     Serial.print("emonTH - Firmware V"); Serial.println(version*0.1);
@@ -275,8 +275,8 @@ void setup() {
     }
   }
   if (debug==1) delay(200);
-  
-  
+
+
   //################################################################################################################################
   // Interrupt pulse counting setup
   //################################################################################################################################
@@ -291,7 +291,7 @@ void setup() {
   p = 0;
 
   attachInterrupt(pulse_countINT, onPulse, RISING);
-  
+
   //################################################################################################################################
   // Power Save  - turn off what we don't need - http://www.nongnu.org/avr-libc/user-manual/group__avr__power.html
   //################################################################################################################################
@@ -301,7 +301,7 @@ void setup() {
   // power_timer0_disable();              //don't disable necessary for the DS18B20 library
   power_timer1_disable();
   power_spi_disable();
-  
+
 } // end of setup
 
 
@@ -369,7 +369,7 @@ void loop()
 
 
     power_spi_enable();
-    
+
     // Read from SI7021 SPI temp & humidity sensor
     if (SI7021_status==1){
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
@@ -377,8 +377,8 @@ void loop()
       emonth.humidity = data.humidityBasisPoints;
       // might nee dome delay here
     }
-    
-    
+
+
     // Send data via RF
     rf12_sleep(RF12_WAKEUP);
     dodelay(100);
@@ -392,11 +392,11 @@ void loop()
     //digitalWrite(LED,HIGH);
     //dodelay(100);
     //digitalWrite(LED,LOW);
-  
+
     if (debug==1)
     {
       Serial.print("temp:");Serial.print(emonth.temp); Serial.print(",");
-  
+
       if (((DHT22_status) || (SI7021_status)) && (DS18B20)){  // DS18b230 + other sensor = assume ds18b20 is external
         Serial.print("temp_ex:");Serial.print(emonth.temp_external); Serial.print(",");
       }
@@ -411,8 +411,8 @@ void loop()
       }
       delay(50);
     } // end serial print debug
-    
-  
+
+
     unsigned long last = now;
     now = millis();
     WDT_number=0;

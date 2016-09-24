@@ -1,19 +1,15 @@
 .pioenvs
+.clang_complete
+.gcc-flags.json
 .piolibdeps
 *~
-
 # Ignore list for Eagle, a PCB layout tool
-
 # Backup files
 *.s#?
 *.b#?
 *.l#?
-
-
 # file locks introduced since 7.x
 *.lck
-
-
 # OS generated files #
 ######################
 .DS_Store
@@ -21,5 +17,3 @@ ehthumbs.db
 Icon?
 Thumbs.db
 */overlays
-*~
-
