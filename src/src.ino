@@ -30,7 +30,8 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
-  V3.0   - (15/09/16) Add support for SI7021 sensor (emonTH V2.0 hardware)
+  V3.0   - (15/09/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
+  ^^^ emonTH V2.0 hardware ^^^
   V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
   V2.6   - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
   V2.5   - (23/10/15) default nodeID 23 to enable new emonHub.conf decoder for pulseCount packet structure
@@ -307,8 +308,8 @@ void loop()
     if (SI7021_status==1){
       power_twi_enable();
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
-      emonth.temp = data.celsiusHundredths;
-      emonth.humidity = data.humidityBasisPoints;
+      emonth.temp = (data.celsiusHundredths/10.0);
+      emonth.humidity = (data.humidityBasisPoints/10.0);
       power_twi_disable();
     }
 
