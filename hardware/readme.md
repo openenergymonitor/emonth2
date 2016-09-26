@@ -1,10 +1,10 @@
 # Board
 
-![board](emonth_V2.0.1_brd.png)
+![board](emonth_V2.0.2_brd.png)
 
 # Schematic
 
-![emonTH V2 schematic](emonth_V2.0.1_sch.png)
+![emonTH V2 schematic](emonth_V2.0.s_sch.png)
 
 # Change log
 

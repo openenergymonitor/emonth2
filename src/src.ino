@@ -99,7 +99,7 @@ const byte DIP_switch1=    7;
 const byte DIP_switch2=    8;
 const byte pulse_countINT= 1;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
 const byte pulse_count_pin=3;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
-#define ONE_WIRE_BUS       16                                        // D19 emonTH V1.5
+#define ONE_WIRE_BUS       17                                        // D19 emonTH V1.5
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -335,7 +335,7 @@ void loop()
       Serial.print("temp:");Serial.print(emonth.temp); Serial.print(",");
 
       if (DS18B20){
-        Serial.print("temp_ex:");Serial.print(emonth.temp_external); Serial.print(",");
+        Serial.print("tempex:");Serial.print(emonth.temp_external); Serial.print(",");
       }
 
       if (SI7021_status){
