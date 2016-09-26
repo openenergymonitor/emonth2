@@ -8,6 +8,10 @@
 
 # Change log
 
+## V2.0.2 (26th Sep 2016)
+
+- Fix LED trace
+
 ## V2.0.1 (Aug 2016)
 
 - Add SI7201 temperature & humidity sensor (see `si7021_eval` folder in emonth2 repo)
