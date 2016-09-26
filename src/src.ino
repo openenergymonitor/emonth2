@@ -1,12 +1,9 @@
 /*
-  emonTH Low Power SI7021 / DHT22 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
+  emonTH Low Power SI7021 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
 
-  Checkes at startup for presence of a DS18B20 temp sensor , DHT22 or SI7021 (temp + humidity)
-  If it finds both DHT22 or SI7021 & DS18B20  sensors the temperature value will be taken from the DS18B20 (external) and DHT22 / SI7021 (internal) and humidity from DHT22
-  If it finds only DS18B20 then no humidity value will be reported
-  If it finds only a DHT22 / SI7021 then both temperature and humidity values will be obtained from this sensor
+  Si7201 = internal temperature & Humidity
+  DS18B20 = External temperature
 
-  Technical hardware documentation wiki: http://wiki.openenergymonitor.org/index.php?title=EmonTH
 
   Part of the openenergymonitor.org project
   Licence: GNU GPL V3
@@ -19,7 +16,7 @@
   Libraries required:
    - see platformio.ini
    - recommend compiling with platformIO for auto library download
-   - Arduno IDE can be used to compile but libs will need to be manually downloaded
+   - Arduino IDE can be used to compile but libs will need to be manually downloaded
 
   Recommended node ID allocation
   -----------------------------------------------------------------------------------------------------------
@@ -59,20 +56,19 @@
   */
 // -------------------------------------------------------------------------------------------------------------
 
-const byte version = 30;         // firmware version divided by 10 e,g 16 = V1.6
-                                                                      // These variables control the transmit timing of the emonTH
+const byte version = 30;                                              // firmware version divided by 10 e,g 16 = V1.6
+// These variables control the transmit timing of the emonTH
 const unsigned long WDT_PERIOD = 80;                                  // mseconds.
 const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
                                                                       // 690x 80 = 55.2 seconds (it needs to be about 5s less than the record interval in emoncms)
-
 const  unsigned long PULSE_MAX_NUMBER = 100;                          // Data sent after PULSE_MAX_NUMBER pulses
 const  unsigned long PULSE_MAX_DURATION = 50;
 
 
 #define RF69_COMPAT 1                                                 // Set to 1 if using RFM69CW or 0 is using RFM12B
-#include <JeeLib.h>                                                   // https://github.com/jcw/jeelib - Tested with JeeLib 3/11/14
+#include <JeeLib.h>                                                   // https://github.com/jcw/jeelib
 
-boolean debug=1;                                                      // Set to 1 to few debug serial output, turning debug off increases battery life
+boolean debug=1;                                                      // Set to 1 to few debug serial output
 
 #define RF_freq RF12_433MHZ                                           // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
 int nodeID = 23;                                                      // EmonTH temperature RFM12B node ID - should be unique on network
@@ -87,7 +83,6 @@ const int TEMPERATURE_PRECISION=11;                                   // 9 (93.8
 #include <avr/sleep.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include "DHT.h"
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }                            // Attached JeeLib sleep function to Atmega328 watchdog -enables MCU to be put into sleep mode inbetween readings to reduce power consumption
 
 // SI7021_status SPI temperature & humidity sensor
@@ -98,7 +93,6 @@ boolean SI7021_status;
 
 // Hardwired emonTH pin allocations
 const byte DS18B20_PWR=    5;
-const byte DHT22_PWR=      6;
 const byte LED=            9;
 const byte BATT_ADC=       1;
 const byte DIP_switch1=    7;
@@ -106,14 +100,6 @@ const byte DIP_switch2=    8;
 const byte pulse_countINT= 1;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
 const byte pulse_count_pin=3;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
 #define ONE_WIRE_BUS       16                                        // D19 emonTH V1.5
-#define DHTPIN             17                                        // D18 emonTH V1.5
-
-// Humidity code adapted from ladyada' example                        // emonTh DHT22 data pin
-// Uncomment whatever type you're using!
-// #define DHTTYPE DHT11   // DHT 11
-#define DHTTYPE DHT22   // DHT 22  (AM2302)
-DHT dht(DHTPIN, DHTTYPE);
-boolean DHT22_status;                                                 // create flag variable to store presence of DS18B20
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -159,7 +145,29 @@ void setup() {
   if ((DIP1 == HIGH) && (DIP2 == LOW)) nodeID=nodeID+2;
   if ((DIP1 == LOW) && (DIP2 == LOW)) nodeID=nodeID+3;
 
-   rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM12B
+  if (debug==1)
+  {
+    Serial.begin(115200);
+    Serial.println("OpenEnergyMonitor.org");
+    Serial.print("emonTH - Firmware V"); Serial.println(version*0.1);
+    #if (RF69_COMPAT)
+    Serial.println("RFM69CW: ");
+    #else
+    Serial.println("RFM12B: ");
+    #endif
+    Serial.print("Node: ");
+    Serial.print(nodeID);
+    Serial.print(" Freq: ");
+    if (RF_freq == RF12_433MHZ) Serial.print("433Mhz");
+    if (RF_freq == RF12_868MHZ) Serial.print("868Mhz");
+    if (RF_freq == RF12_915MHZ) Serial.print("915Mhz");
+    Serial.print(" Network: ");
+    Serial.println(networkGroup);
+    Serial.println("Int RFM...");
+    delay(100);
+  }
+  rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM12B
+  if (debug==1) Serial.println("RFM Started");
 
   // Send RFM69CW test sequence (for factory testing)
   for (int i=10; i>-1; i--)
@@ -173,80 +181,27 @@ void setup() {
   // end of factory test sequence
 
   rf12_sleep(RF12_SLEEP);
-  if (debug==1)
-  {
-    Serial.begin(115200);
-    Serial.print(DIP1); Serial.println(DIP2);
-    Serial.println("OpenEnergyMonitor.org");
-    Serial.print("emonTH - Firmware V"); Serial.println(version*0.1);
-    #if (RF69_COMPAT)
-      Serial.println("RFM69CW Init> ");
-    #else
-      Serial.println("RFM12B Init> ");
-    #endif
-    Serial.print("Node: ");
-    Serial.print(nodeID);
-    Serial.print(" Freq: ");
-    if (RF_freq == RF12_433MHZ) Serial.print("433Mhz");
-    if (RF_freq == RF12_868MHZ) Serial.print("868Mhz");
-    if (RF_freq == RF12_915MHZ) Serial.print("915Mhz");
-    Serial.print(" Network: ");
-    Serial.println(networkGroup);
-    delay(100);
-  }
 
-  pinMode(DHT22_PWR,OUTPUT);
   pinMode(DS18B20_PWR,OUTPUT);
   pinMode(BATT_ADC, INPUT);
-  digitalWrite(DHT22_PWR,LOW);
   pinMode(pulse_count_pin, INPUT_PULLUP);
-
-  //################################################################################################################################
-  // Test for presence of DHT22
-  //################################################################################################################################
-  digitalWrite(DHT22_PWR,HIGH);
-  dodelay(2000);                                                        // wait 2s for DH22 to warm up
-  dht.begin();
-  float h = dht.readHumidity();                                         // Read Humidity
-  float t = dht.readTemperature();                                      // Read Temperature
-  digitalWrite(DHT22_PWR,LOW);                                          // Power down
-
-  if (isnan(t) || isnan(h))                                             // check if returns are valid, if they are NaN (not a number) then something went wrong!
-  {
-    Sleepy::loseSomeTime(1500);
-    float h = dht.readHumidity();  float t = dht.readTemperature();
-    if (isnan(t) || isnan(h))
-    {
-      if (debug==1) Serial.println("No DHT22");
-      DHT22_status=0;
-    }
-  }
-  else
-  {
-    DHT22_status=1;
-    if (debug==1) Serial.println("Detected DHT22");
-  }
 
   //################################################################################################################################
   // Setup and for presence of si7201
   //################################################################################################################################
+  if (debug==1) Serial.println("Int SI7201..");
   SI7021_sensor.begin();
   int deviceid = SI7021_sensor.getDeviceId();
-  if (deviceid!=0) { //need to test this!!!
-    Serial.print("Found SI7021: "); Serial.println(deviceid);
+  if (deviceid!=0) {
+    Serial.print("SI7021 Started, ID: "); Serial.println(deviceid);
     SI7021_status=1;
-    if (DHT22_status==1){
-      Serial.println("Disabling DHT22");
-      DHT22_status = 0;                                                //disable DHT22 if SI7021_status is present
-    }
     si7021_env data = SI7021_sensor.getHumidityAndTemperature();
     Serial.print("SI7021 t: "); Serial.println(data.celsiusHundredths/100.0);
     Serial.print("SI7021 h: "); Serial.println(data.humidityBasisPoints/100.0);
-    // might need some delay here
   }
   else {
     SI7021_status=0;
-    Serial.println("No SI7021_status");
+    Serial.println("SI7021 Error");
   }
   //################################################################################################################################
   // Setup and for presence of DS18B20
@@ -255,7 +210,6 @@ void setup() {
   sensors.begin();
   sensors.setWaitForConversion(false);                             //disable automatic temperature conversion to reduce time spent awake, conversion will be implemented manually in sleeping http://harizanov.com/2013/07/optimizing-ds18b20-code-for-low-power-applications/
   numSensors=(sensors.getDeviceCount());
-
   byte j=0;                                        // search for one wire devices and
                                                    // copy to device address arrays.
   while ((j < numSensors) && (oneWire.search(allAddress[j])))  j++;
@@ -271,25 +225,18 @@ void setup() {
     DS18B20=1;
     if (debug==1) {
       Serial.print("Found "); Serial.print(numSensors); Serial.println(" DS18B20");
-       if ((DHT22_status==1) || (SI7021_status==1))  Serial.println("DS18B20 & DHT22/SI7021 found, assume DS18B20 is ext");
     }
   }
-  if (debug==1) delay(200);
+  if (debug==1) delay(100);
 
 
   //################################################################################################################################
   // Interrupt pulse counting setup
   //################################################################################################################################
-  // Serial.print(DS18B20); Serial.print(DHT22_status);
-  // if (debug==1) delay(200);
-
-  digitalWrite(LED,LOW);
-
   emonth.pulsecount = 0;
   pulseCount = 0;
   WDT_number=720;
   p = 0;
-
   attachInterrupt(pulse_countINT, onPulse, RISING);
 
   //################################################################################################################################
@@ -297,11 +244,12 @@ void setup() {
   //################################################################################################################################
   ACSR |= (1 << ACD);                     // disable Analog comparator
   if (debug==0) power_usart0_disable();   //disable serial UART
-  power_twi_disable();                    //Disable the Two Wire Interface module.
-  // power_timer0_disable();              //don't disable necessary for the DS18B20 library
-  power_timer1_disable();
+  power_twi_disable();                    //Two Wire Interface module:
   power_spi_disable();
+  power_timer1_disable();
+  // power_timer0_disable();              //don't disable necessary for the DS18B20 library
 
+  digitalWrite(LED,LOW);                  // turn off LED to indciate end setup
 } // end of setup
 
 
@@ -337,23 +285,10 @@ void loop()
       digitalWrite(DS18B20_PWR, LOW);
       if ((temp<125.0) && (temp>-40.0))
       {
-        if (DHT22_status==0) emonth.temp=(temp*10);            // if DHT22 is not present assume DS18B20 is primary sensor (internal)
-        if (DHT22_status==1) emonth.temp_external=(temp*10);   // if DHT22 is present assume DS18B20 is external sensor wired into terminal block
+        emonth.temp_external=(temp*10);
       }
     }
 
-    if (DHT22_status==1)
-    {
-      digitalWrite(DHT22_PWR,HIGH);                                                                                                  // Send the command to get temperatures
-      dodelay(2000);                                             //sleep for 1.5 - 2's to allow sensor to warm up
-      // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-      emonth.humidity = ((dht.readHumidity())*10);
-
-      float temp=(dht.readTemperature());
-      if ((temp<85.0) && (temp>-40.0)) emonth.temp = (temp*10);
-
-      digitalWrite(DHT22_PWR,LOW);
-    }
 
     emonth.battery=int(analogRead(BATT_ADC)*0.03225806);                    //read battery voltage, convert ADC to volts x10
 
@@ -367,19 +302,18 @@ void loop()
     // See more https://community.openenergymonitor.org/t/emonth-battery-measurement-accuracy/1317
     //emonth.battery=int(analogRead(BATT_ADC)*3.222);
 
-
-    power_spi_enable();
-
+    // Read SI7201
     // Read from SI7021 SPI temp & humidity sensor
     if (SI7021_status==1){
+      power_twi_enable();
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
       emonth.temp = data.celsiusHundredths;
       emonth.humidity = data.humidityBasisPoints;
-      // might nee dome delay here
+      power_twi_disable();
     }
 
-
     // Send data via RF
+    power_spi_enable();
     rf12_sleep(RF12_WAKEUP);
     dodelay(100);
     rf12_sendNow(0, &emonth, sizeof emonth);
@@ -389,26 +323,30 @@ void loop()
     rf12_sleep(RF12_SLEEP);
     dodelay(100);
     power_spi_disable();
+
     //digitalWrite(LED,HIGH);
     //dodelay(100);
     //digitalWrite(LED,LOW);
 
     if (debug==1)
+    // Serial print strings pairs e.g. "temp:2634,humidity:4010,batt:33"
+    // Works with EmonESP direct serial
     {
       Serial.print("temp:");Serial.print(emonth.temp); Serial.print(",");
 
-      if (((DHT22_status) || (SI7021_status)) && (DS18B20)){  // DS18b230 + other sensor = assume ds18b20 is external
+      if (DS18B20){
         Serial.print("temp_ex:");Serial.print(emonth.temp_external); Serial.print(",");
       }
 
-      if ((DHT22_status) || (SI7021_status)) //humidy sensor present
-      {
+      if (SI7021_status){
         Serial.print("humidity:");Serial.print(emonth.humidity); Serial.print(",");
       }
-      Serial.print("battery: "); Serial.print(emonth.battery); Serial.print(",");
+      Serial.print("batt:"); Serial.print(emonth.battery);
       if (emonth.pulsecount > 0) {
+        Serial.print(",");
         Serial.print("pulse:"); Serial.print(emonth.pulsecount);
       }
+      Serial.println();
       delay(50);
     } // end serial print debug
 
