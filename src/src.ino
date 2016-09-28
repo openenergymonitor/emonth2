@@ -317,7 +317,7 @@ void loop()
     // Send data via RF
     power_spi_enable();
     rf12_sleep(RF12_WAKEUP);
-    dodelay(100);
+    dodelay(50);
     rf12_sendNow(0, &emonth, sizeof emonth);
     // set the sync mode to 2 if the fuses are still the Arduino default
     // mode 3 (full powerdown) can only be used with 258 CK startup fuses
