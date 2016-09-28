@@ -276,7 +276,7 @@ void loop()
     pulseCount = 0;
     sei();
 
-/*
+
     if (DS18B20==1)
     {
       digitalWrite(DS18B20_PWR, HIGH); dodelay(50);
@@ -291,7 +291,6 @@ void loop()
       }
     }
 
-*/
     emonth.battery=int(analogRead(BATT_ADC)*0.0322);                    //read battery voltage, convert ADC to volts x10
 
     //Enhanced battery monitoring mode. In this mode battery values
