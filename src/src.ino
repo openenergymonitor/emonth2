@@ -225,7 +225,7 @@ void setup() {
   {
     DS18B20=1;
     if (debug==1) {
-      Serial.print("Found "); Serial.print(numSensors); Serial.println(" DS18B20");
+      Serial.print(numSensors); Serial.println(" DS18B20");
     }
   }
   if (debug==1) delay(100);
@@ -276,6 +276,7 @@ void loop()
     pulseCount = 0;
     sei();
 
+/*
     if (DS18B20==1)
     {
       digitalWrite(DS18B20_PWR, HIGH); dodelay(50);
@@ -290,8 +291,8 @@ void loop()
       }
     }
 
-
-    emonth.battery=int(analogRead(BATT_ADC)*0.03225806);                    //read battery voltage, convert ADC to volts x10
+*/
+    emonth.battery=int(analogRead(BATT_ADC)*0.0322);                    //read battery voltage, convert ADC to volts x10
 
     //Enhanced battery monitoring mode. In this mode battery values
     //sent in x*1000 mode instead of x*10. This allows to have more accurate
@@ -308,8 +309,8 @@ void loop()
     if (SI7021_status==1){
       power_twi_enable();
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
-      emonth.temp = (data.celsiusHundredths/10.0);
-      emonth.humidity = (data.humidityBasisPoints/10.0);
+      emonth.temp = (data.celsiusHundredths*0.1);
+      emonth.humidity = (data.humidityBasisPoints*0.1);
       power_twi_disable();
     }
 
@@ -348,7 +349,7 @@ void loop()
         Serial.print("pulse:"); Serial.print(emonth.pulsecount);
       }
       Serial.println();
-      delay(50);
+      delay(5);
     } // end serial print debug
 
 
