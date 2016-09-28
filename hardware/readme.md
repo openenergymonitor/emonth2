@@ -4,7 +4,7 @@
 
 # Schematic
 
-![emonTH V2 schematic](emonth_V2.0.s_sch.png)
+![emonTH V2 schematic](emonth_V2.0.2_sch.png)
 
 # Change log
 
