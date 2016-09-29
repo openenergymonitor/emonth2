@@ -101,6 +101,8 @@ const byte DIP_switch2=    8;
 const byte pulse_countINT= 1;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
 const byte pulse_count_pin=3;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
 #define ONE_WIRE_BUS       17                                        // D19 emonTH V1.5
+cost byte DHT22_PWR=       6;                                      // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins
+cost byte DHT22_DATA=      16;                                     // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins. 
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -134,7 +136,17 @@ void setup() {
 //################################################################################################################################
 
   pinMode(LED,OUTPUT); digitalWrite(LED,HIGH);                       // Status LED on
-
+  
+  // Unused pins configure as input pull up for low power 
+  // http://electronics.stackexchange.com/questions/43460/how-should-unused-i-o-pins-be-configured-on-atmega328p-for-lowest-power-consumpt  
+  // port map: https://github.com/openenergymonitor/emonth2/blob/master/hardware/readme.md
+  pinMode(DHT22_PWR, INPUT_PULLUP);                                  //DHT22 not used on emonTH V2.
+  pinMode(DHT22_DATA, INPUT_PULLUP);                                 //DHT22 not used on emonTH V2
+  pinMode(14, INPUT_PULLUP); 
+  pinMode(20, INPUT_PULLUP); 
+  pinMode(21, INPUT_PULLUP); 
+  pinMode(4, INPUT_PULLUP); 
+  
   //READ DIP SWITCH POSITIONS - LOW when switched on (default off - pulled up high)
   pinMode(DIP_switch1, INPUT_PULLUP);
   pinMode(DIP_switch2, INPUT_PULLUP);
