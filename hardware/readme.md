@@ -19,31 +19,31 @@
 
 # Port Map
 
-|                |           |            |                       |                       |
-|----------------|-----------|------------|-----------------------|-----------------------|
-| Arduino        | ATmega328 | Function   | emonTH V1.5           | emonTH V2             |
-| Analog 0 (D14) | PC0       |            |                       |                       |
-| Analog 1 (D15) | PC1       |            | 2x AA Battery Voltage | 2x AA Battery Voltage |
-| Analog 2 (D16) | PC2       |            |                       | DHT22 Data            |
-| Analog 3 (D17) | PC3       |            |                       | DS18B20 One-wire Data |
-| Analog 4 (D18) | PC4       | (SDA)      | DHT22 Data            | SI7021 SDA (Data)     |
-| Analog 5 (D19) | PC5       | (SCL)      | DS18B20 One-wire Data | SI7021 SCL (SCK)      |
-| Analog 6 (D20) |           |            |                       |                       |
-| Analog 7 (D21) |           |            |                       |                       |
-| Digital 0      | PD0       | (RXD)      | FTDI Tx               | FTDI Tx               |
-| Digital 1      | PD1       | (TXD)      | FTDI Rx               | FTDI Rx               |
-| Digital 2      | PD2       | (int0) PWM | RFM12B IRQ            | RFM69CW IRQ           |
-| Digital 3      | PD3       | (int1) PWM | Terminal block        | Terminal block        |
-| Digital 4      | PD4       |            |                       |                       |
-| Digital 5      | PD5       | PWM        | DS18B20 PWR           | DS18B20 PWR           |
-| Digital 6      | PD6       | PWM        | DHT22 PWR             | DHT22 PWR             |
-| Digital 7      | PD7       |            | DIP 1                 | DIP 1                 |
-| Digital 8      | PB0       |            | DIP 2                 | DIP 2                 |
-| Digital 9      | PB1       | PWM        | LED                   | LED                   |
-| Digital 10     | PB2       | (SS) PWM   | RFM12B SEL            | RFM69CW SEL           |
-| Digital 11     | PB3       | (MOSI) PWM | RFM12 SDI             | RFM69CW SDI           |
-| Digital 12     | PB4       | (MISO)     | RFM12 SDO             | RFM69CW SDO           |
-| Digital 13     | PB5       | (SCK)      | RFM12 SCK             | RFM69CW SCK           |
+|                |           |            |                       |
+|----------------|-----------|------------|-----------------------|
+| Arduino        | ATmega328 | Function   | emonTH V2             |
+| Analog 0 (D14) | PC0       |            |                       |
+| Analog 1 (D15) | PC1       |            | 2x AA Battery Voltage |
+| Analog 2 (D16) | PC2       |            | DHT22 Data            |
+| Analog 3 (D17) | PC3       |            | DS18B20 One-wire Data |
+| Analog 4 (D18) | PC4       | (SDA)      | SI7021 SDA (Data)     |
+| Analog 5 (D19) | PC5       | (SCL)      | SI7021 SCL (SCK)      |
+| Analog 6 (D20) |           |            |                       |
+| Analog 7 (D21) |           |            |                       |
+| Digital 0      | PD0       | (RXD)      | FTDI Tx               |
+| Digital 1      | PD1       | (TXD)      | FTDI Rx               |
+| Digital 2      | PD2       | (int0) PWM | RFM69CW IRQ           |
+| Digital 3      | PD3       | (int1) PWM | Terminal block        |
+| Digital 4      | PD4       |            |                       |
+| Digital 5      | PD5       | PWM        | DS18B20 PWR           |
+| Digital 6      | PD6       | PWM        | DHT22 PWR             |
+| Digital 7      | PD7       |            | DIP 1                 |
+| Digital 8      | PB0       |            | DIP 2                 |
+| Digital 9      | PB1       | PWM        | LED                   |
+| Digital 10     | PB2       | (SS) PWM   | RFM69CW SEL           |
+| Digital 11     | PB3       | (MOSI) PWM | RFM69CW SDI           |
+| Digital 12     | PB4       | (MISO)     | RFM69CW SDO           |
+| Digital 13     | PB5       | (SCK)      | RFM69CW SCK           |
 
 
 # BOM

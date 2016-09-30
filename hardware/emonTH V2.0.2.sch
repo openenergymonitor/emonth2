@@ -18191,7 +18191,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <text x="24.765" y="356.87" size="3.81" layer="91">ATMEGA328</text>
 <text x="104.14" y="367.665" size="3.81" layer="91">RFM12B
 RFM1269CW</text>
-<text x="2.54" y="233.68" size="1.778" layer="91">D17 
+<text x="2.54" y="233.68" size="1.778" layer="91">D16
 DHT22 data</text>
 <text x="106.68" y="292.1" size="1.778" layer="91">Si7020 / HTU21D Temperature &amp; Humidity </text>
 <text x="35.56" y="241.3" size="1.778" layer="91">DHT22 PWR</text>
