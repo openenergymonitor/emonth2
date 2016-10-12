@@ -1,4 +1,4 @@
-// http://docs.platformio.org/en/feature-platformio-30/platforms/unit_testing.html#example
+// http://docs.platformio.org/en/stable/plus/unit-testing.html
 
 // Unit test to test opperation of ATmega328 by flashing LED (pin 9) and checking output
 
@@ -6,6 +6,8 @@
 
 #include <Arduino.h>
 #include <unity.h>
+#include <SI7021.h>
+SI7021 SI7021_sensor_test;
 
 #ifdef UNIT_TEST
 
@@ -17,27 +19,35 @@
 // // clean stuff up here
 // }
 
+const byte LED =9;
 
 void test_9_pin_number(void) {
-    TEST_ASSERT_EQUAL(9, 9);
+    TEST_ASSERT_EQUAL(LED, LED);
 }
 
 void test_led_state_high(void) {
-    digitalWrite(9, HIGH);
-    TEST_ASSERT_EQUAL(digitalRead(9), HIGH);
+    digitalWrite(LED, HIGH);
+    TEST_ASSERT_EQUAL(digitalRead(LED), HIGH);
 }
 
 void test_led_state_low(void) {
-    digitalWrite(9, LOW);
-    TEST_ASSERT_EQUAL(digitalRead(9), LOW);
+    digitalWrite(LED, LOW);
+    TEST_ASSERT_EQUAL(digitalRead(LED), LOW);
 }
+
+
+void test_si7021(void) {
+    TEST_ASSERT_EQUAL(SI7021_sensor_test.begin(), 1);
+}
+
 
 
 
 void setup() {
     UNITY_BEGIN();    // IMPORTANT LINE!
     RUN_TEST(test_9_pin_number);
-    pinMode(9, OUTPUT);
+    pinMode(LED, OUTPUT);
+    RUN_TEST(test_si7021);
 }
 
 uint8_t i = 0;
