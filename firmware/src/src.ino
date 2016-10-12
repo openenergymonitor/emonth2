@@ -102,7 +102,7 @@ const byte pulse_countINT= 1;                                        // INT 1 / 
 const byte pulse_count_pin=3;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
 #define ONE_WIRE_BUS       17                                        // D19 emonTH V1.5
 const byte DHT22_PWR=       6;                                      // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins
-const byte DHT22_DATA=      16;                                     // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins. 
+const byte DHT22_DATA=      16;                                     // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins.
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
