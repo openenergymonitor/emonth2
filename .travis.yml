@@ -16,6 +16,8 @@ deploy:
   file: firmware/.pioenvs/emonth2_deploy/firmware.hex
   on:
     repo: openenergymonitor/emonth2
+    all_branches: true
+    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
 
 ## Setup auto depoly .hex on release tag
 # gem install travis
