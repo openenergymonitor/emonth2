@@ -10,20 +10,9 @@ install:
 script:
 - platformio run -d firmware -e emonth2_deploy
 deploy:
+  provider: releases
+  api_key:
+    secure: nSzsNZeeR5wKud3CHP1MD3r9Uc9vy0hE4ZBLz0U3ATpcpUfh/WB15axs6wU1rOot8mxCo8+FLAhXt0RGfw3kZmEdId/VyBxmunOFDX4hGmXPzCi7ov9RXFsYWKuKOo9owodir+Iu0xF+UrzBKmPKATuRcc5JyW36IdHjFgG1ru41eNMWPk/A4Nre1yWpPh6gK/Fadl261/uuh2hfZbce48yRpzvAjdKWPXPZREjONZi8vwLBLjpS+s9YMaIWvZh+zYjM+jYpPB5MB+R8bjRi9kFkFwTjj0UcI1k/XJ+drdcNKuBfGiHlKu0ACt7HsO5uQWj/PTzy1LQnB45Rf4Dw6qEOIoxPBvlq5gt972LaAuLP5lldAlTcd+pvEntqbe2ziXSaWwTy2/wRx5Bx6xxgB7TSQ7J3JoPNSR9EGY4/3NIosK+4BTl77L7jVhLLxRopxge0PSs7/qej0ZhPJ5JdGWmVlATNZ006PEKdqwiUe+lyEsuuBqBqSlXgBwW1g2jZdkV+dwgpsF9w4MZW7ePFg0xvUEDIYFEs1Jv1ydrVkiRohXzwxZUbK+2xWIAEEiGXg3YR57fzDCCPjfGUHAMCLHeKWJd2SAFgOOXV6Hb2ztlCpLLy9wdL2KXTvDe5Vx1cKxADkW2ixRF0KR9rlCMdmTMmYsJfiUprTpUOQhhXXqs=
+  file: firmware/.pioenvs/emonth2/firmware.hex
   on:
     repo: openenergymonitor/emonth2
-    all_branches: true
-    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
-  skip_cleanup: true
-  provider: releases
-  overwrite: true
-  file: "firmware/.pioenvs/emonth2/firmware.hex"
-  api_key:
-    secure: M3kEH8npkpyV3sKSEIho+ARh5nXlNMBjSWpMeqGJXZ89w1S3Lqpy7HPEmVeWvdFdyNR0COEqYklYihG9pVQLa+20NTskZTB3WHfCwLkp81mX9eUtPvuC1UybPxVOj1b+9U9E8cmbeFBJZuxCrEfLzMu/O0bkjDY+MlBEk+sfHdqVLrvQbJgDLPZ5SSD2AuL33QVMNsX5KCMj/4Z+sYKgtS9QackGksblrEhGFTJY6sgxXsBcFUA2hLR03qb9fxfmf1CG1yI4PXy8cMabUHlwg35Wn/Wu3qzk5A5wKKkwlcP8g30+HJ/yw9rtxu/af8zRNIDUgaL1m4H9ekDCULFwmwEHgjXEXeHmMAahEwQsQhGNVzdeqrvGIMdl1A6PgThVQu1mPV5wjHdItXzQsFbpeDdCKPl9lNCCBFyXdPdKqCNBRhp3DlZItqgKDUUD1GpZ6GmOTUDbm8rNpLG5rn41ONDizYde3t8JevwTYB80bE6avLO6e4FnMdUSVV5Z7wPRRSzKR7n/PuRaKtrZlitx5MR7dGf6G1OyF5MybBIOvnGnKBxanbzXcWEREOv501grRezPVFQg+/bLzxIVcaXWOt+yMHrq50a6Dltua2IF8AwY0jmoCPlGcHrsr/Si8rq7bmjwErjxQVxi6tuFhKD5XuY1MHqyQ7wKqilh4yqlzto=
-
-
-## Setup auto depoly .hex on release tag
-# sudo gem install travis
-# cd into repo
-# $ travis setup releases
-# folow prompts..depoly section will be populated
