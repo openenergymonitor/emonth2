@@ -30,7 +30,8 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
-  V3.0   - Oct16 Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
+  V3.1.0   - 18Oct16 test for RFM69CW and SI7201 at startup, allow serial use without RF prescent
+  V3.0.0   - Oct16 Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
   ^^^ emonTH V2.0 hardware ^^^
   V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
   V2.6   - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
@@ -56,6 +57,8 @@
          units = C,C,%,V,p
   */
 // -------------------------------------------------------------------------------------------------------------
+boolean debug=1;                                                      // Set to 1 to few debug serial output
+boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
 const byte version = 30;                                              // firmware version divided by 10 e,g 16 = V1.6
 // These variables control the transmit timing of the emonTH
@@ -68,8 +71,10 @@ const  unsigned long PULSE_MAX_DURATION = 50;
 
 #define RF69_COMPAT 1                                                 // Set to 1 if using RFM69CW or 0 is using RFM12B
 #include <JeeLib.h>                                                   // https://github.com/jcw/jeelib
+#include <RF69_avr.h>
+#define REG_SYNCVALUE1      0x2F
+boolean rfm69cw_status;
 
-boolean debug=1;                                                      // Set to 1 to few debug serial output
 
 #define RF_freq RF12_433MHZ                                           // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
 int nodeID = 23;                                                      // EmonTH temperature RFM12B node ID - should be unique on network
@@ -132,6 +137,7 @@ const byte SLAVE_ADDRESS = 42;
 //################################################################################################################################
 //################################################################################################################################
 #ifndef UNIT_TEST // IMPORTANT LINE! // http://docs.platformio.org/en/stable/plus/unit-testing.html
+
 void setup() {
 //################################################################################################################################
 
@@ -176,24 +182,34 @@ void setup() {
     if (RF_freq == RF12_915MHZ) Serial.print("915Mhz");
     Serial.print(" Network: ");
     Serial.println(networkGroup);
-    Serial.println("Int RFM...");
     delay(100);
   }
-  rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM12B
-  if (debug==1) Serial.println("RFM Started");
 
-  // Send RFM69CW test sequence (for factory testing)
-  for (int i=10; i>-1; i--)
-  {
-    emonth.temp=i;
-    rf12_sendNow(0, &emonth, sizeof emonth);
-    delay(100);
-  }
-  rf12_sendWait(2);
-  emonth.temp=0;
-  // end of factory test sequence
-
-  rf12_sleep(RF12_SLEEP);
+    // Test for RFM69CW and int with test sequence if found
+    spiInit();
+    writeReg(REG_SYNCVALUE1, 0xAA);
+    int result = readReg(REG_SYNCVALUE1);
+    writeReg(REG_SYNCVALUE1, 0x55);
+    result = result + readReg(REG_SYNCVALUE1);
+    if (result!=0){  // result will be > 0 if RFM69CW is found
+      rfm69cw_status = 1;
+      rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
+      if (debug==1) Serial.println("RFM Started");
+      // Send RFM69CW test sequence (for factory testing)
+      for (int i=10; i>-1; i--)
+      {
+        emonth.temp=i;
+        rf12_sendNow(0, &emonth, sizeof emonth);
+        delay(100);
+      }
+      rf12_sendWait(2);
+      emonth.temp=0;
+      // end of factory test sequence
+      rf12_sleep(RF12_SLEEP);
+    } else {
+      if (debug) Serial.println("RFM69CW NOT Detected");
+      rfm69cw_status =0;
+    }
 
   pinMode(DS18B20_PWR,OUTPUT);
   pinMode(BATT_ADC, INPUT);
@@ -210,20 +226,23 @@ void setup() {
     SI7021_sensor.begin();
     int deviceid = SI7021_sensor.getDeviceId();
     if (deviceid!=0) {
-      Serial.print("SI7021 Started, ID: "); Serial.println(deviceid);
       SI7021_status=1;
-      si7021_env data = SI7021_sensor.getHumidityAndTemperature();
-      Serial.print("SI7021 t: "); Serial.println(data.celsiusHundredths/100.0);
-      Serial.print("SI7021 h: "); Serial.println(data.humidityBasisPoints/100.0);
+      if (debug){
+        si7021_env data = SI7021_sensor.getHumidityAndTemperature();
+        Serial.print("SI7021 Started, ID: ");
+        Serial.println(deviceid);
+        Serial.print("SI7021 t: "); Serial.println(data.celsiusHundredths/100.0);
+        Serial.print("SI7021 h: "); Serial.println(data.humidityBasisPoints/100.0);
+      }
     }
     else {
       SI7021_status=0;
-      Serial.println("SI7021 Error");
+      if (debug) Serial.println("SI7021 Error");
     }
   }
   else {
     SI7021_status=0;
-    Serial.println("SI7021 Error");
+    if (debug) Serial.println("SI7021 Error");
   }
   //################################################################################################################################
   // Setup and for presence of DS18B20
@@ -271,7 +290,10 @@ void setup() {
   power_timer1_disable();
   // power_timer0_disable();              //don't disable necessary for the DS18B20 library
 
-  digitalWrite(LED,LOW);                  // turn off LED to indciate end setup
+  // Only turn off LED if both sensor and RF69CW are working
+  if ((rfm69cw_status) && (SI7021_status)){
+    digitalWrite(LED,LOW);                  // turn off LED to indciate end setup
+  }
 } // end of setup
 
 
@@ -334,21 +356,27 @@ void loop()
       power_twi_disable();
     }
 
-    // Send data via RF
-    power_spi_enable();
-    rf12_sleep(RF12_WAKEUP);
-    dodelay(30);                                   // wait for module to wakup
-    rf12_sendNow(0, &emonth, sizeof emonth);
-    // set the sync mode to 2 if the fuses are still the Arduino default
-    // mode 3 (full powerdown) can only be used with 258 CK startup fuses
-    rf12_sendWait(2);
-    rf12_sleep(RF12_SLEEP);
-    dodelay(100);
-    power_spi_disable();
 
-    //digitalWrite(LED,HIGH);
-    //dodelay(100);
-    //digitalWrite(LED,LOW);
+    // Send data via RF
+    if (rfm69cw_status){
+      power_spi_enable();
+      rf12_sleep(RF12_WAKEUP);
+      dodelay(30);                                   // wait for module to wakup
+      rf12_sendNow(0, &emonth, sizeof emonth);
+      // set the sync mode to 2 if the fuses are still the Arduino default
+      // mode 3 (full powerdown) can only be used with 258 CK startup fuses
+      rf12_sendWait(2);
+      rf12_sleep(RF12_SLEEP);
+      dodelay(100);
+      power_spi_disable();
+    }
+
+    if (flash_led){
+      digitalWrite(LED,HIGH);
+      dodelay(100);
+      digitalWrite(LED,LOW);
+    }
+
 
     if (debug==1)
     // Serial print strings pairs e.g. "temp:2634,humidity:4010,batt:33"
@@ -399,6 +427,17 @@ void onPulse()
   p=1;                                       // flag for new pulse set to true
   pulseCount++;                              // number of pulses since the last RF sent
 }
+
+// Used to test for RFM69CW prescence
+static void writeReg (uint8_t addr, uint8_t value) {
+    RF69::control(addr | 0x80, value);
+}
+
+static uint8_t readReg (uint8_t addr) {
+    return RF69::control(addr, 0);
+}
+
+
 
 #endif    // IMPORTANT LINE! end unit test
 //http://docs.platformio.org/en/stable/plus/unit-testing.html

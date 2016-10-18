@@ -7,13 +7,15 @@
 #include <Arduino.h>
 #include <unity.h>
 #include <SI7021.h>
+
+
 SI7021 sensor;
 
 #ifdef UNIT_TEST
 
-// void setUp(void) {
-  // wire.begin();
-// }
+ // void setUp(void) {
+  // spiInit();
+  // }
 
 // void tearDown(void) {
 // // clean stuff up here
@@ -21,7 +23,6 @@ SI7021 sensor;
 
 const byte LED =9;
 const byte si7021_address=40;
-
 
 void led_state_high(void) {
     digitalWrite(LED, HIGH);
@@ -33,11 +34,8 @@ void led_state_low(void) {
     TEST_ASSERT_EQUAL(digitalRead(LED), LOW);
 }
 
-void scl_line_high(void){
+void i2c_line_high(void){
   TEST_ASSERT_EQUAL(digitalRead(SCL), HIGH);
-}
-
-void sda_line_high(void){
   TEST_ASSERT_EQUAL(digitalRead(SDA), HIGH);
 }
 
@@ -83,7 +81,6 @@ void si7021_read_humidity(void) {
 
 
 
-
 void setup() {
     UNITY_BEGIN();    // IMPORTANT LINE!
 
@@ -93,9 +90,7 @@ void setup() {
     RUN_TEST(led_state_low);
 
     // Test Sensor
-    RUN_TEST(scl_line_high);
-    RUN_TEST(sda_line_high);
-
+    RUN_TEST(i2c_line_high);
     // I2C lines need to be pulled high for I2C to work
     if (digitalRead(SDA) == HIGH && digitalRead(SCL) == HIGH){
       RUN_TEST(si7021_start);
