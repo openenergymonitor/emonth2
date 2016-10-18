@@ -30,7 +30,7 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
-  V3.0   - (15/09/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
+  V3.0   - Oct16 Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
   ^^^ emonTH V2.0 hardware ^^^
   V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
   V2.6   - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
@@ -128,7 +128,7 @@ unsigned long WDT_number;
 boolean  p;
 
 unsigned long now = 0;
-
+const byte SLAVE_ADDRESS = 42;
 //################################################################################################################################
 //################################################################################################################################
 #ifndef UNIT_TEST // IMPORTANT LINE! // http://docs.platformio.org/en/stable/plus/unit-testing.html
@@ -203,14 +203,23 @@ void setup() {
   // Setup and for presence of si7201
   //################################################################################################################################
   if (debug==1) Serial.println("Int SI7201..");
-  SI7021_sensor.begin();
-  int deviceid = SI7021_sensor.getDeviceId();
-  if (deviceid!=0) {
-    Serial.print("SI7021 Started, ID: "); Serial.println(deviceid);
-    SI7021_status=1;
-    si7021_env data = SI7021_sensor.getHumidityAndTemperature();
-    Serial.print("SI7021 t: "); Serial.println(data.celsiusHundredths/100.0);
-    Serial.print("SI7021 h: "); Serial.println(data.humidityBasisPoints/100.0);
+
+  // check if the I2C lines are HIGH
+  if (digitalRead(SDA) == HIGH || digitalRead(SCL) == HIGH)
+  {
+    SI7021_sensor.begin();
+    int deviceid = SI7021_sensor.getDeviceId();
+    if (deviceid!=0) {
+      Serial.print("SI7021 Started, ID: "); Serial.println(deviceid);
+      SI7021_status=1;
+      si7021_env data = SI7021_sensor.getHumidityAndTemperature();
+      Serial.print("SI7021 t: "); Serial.println(data.celsiusHundredths/100.0);
+      Serial.print("SI7021 h: "); Serial.println(data.humidityBasisPoints/100.0);
+    }
+    else {
+      SI7021_status=0;
+      Serial.println("SI7021 Error");
+    }
   }
   else {
     SI7021_status=0;
