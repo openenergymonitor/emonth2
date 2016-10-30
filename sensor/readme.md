@@ -13,11 +13,16 @@
 | Sleep Current       | 0.02uA             | 0.06uA |  15uA          | 750 times less power | 0.1uA - 0.3uA |
 | Measurement Current | 0.045mA            | 0.09 mA |  0.5mA         | 11 times less power | 0.714mA - 0.350mA |
 | Measurement time    | 0.01s - 0.0026s    | 0.01s - 0.0026s |  2s            | 200 times faster | 0.013s |
-| Energy consumed per sample | 0.00045mW   ||  1mW           | 2222 times less power | |
+| Energy consumed per sample | 1.5uJ   | 2.97uJ |  3300uK           | 2000 times less power | |
 | Time sampling per day* |  14.4s          ||  2800s         | | |
 | Time sleeping per day* | 86386s          ||  83600s        | | |
 | Energy consumed per day* | 2.36mW [1]    ||  2836mW [2]    | 1201 times less energy per day!  | |
 
+```
+energy consumed (joule, J) = potential difference (volt, V) × charge (coulomb, C)  
+charge (coulomb, C) = current (ampere, A) × time (second, s) 
+energy consumed (joule, J)  = potential difference (volt, V) × current (ampere, A) × time (second, s) 
+```
 
 ## Energy consumed per day*
 
@@ -27,3 +32,4 @@
 \*Assuming 1 sample per min and sleeping in between samples, 1440 min per day = 86400s per day
 
 [Adafruit HTU21D Library](https://github.com/adafruit/Adafruit_HTU21DF_Library)
+
