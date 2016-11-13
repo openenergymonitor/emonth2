@@ -179,7 +179,7 @@ void setup() {
   {
     Serial.begin(115200);
     Serial.println("OpenEnergyMonitor.org");
-    Serial.print("emonTH - Firmware V"); Serial.println(version*0.1);
+    Serial.print("emonTH FW: V"); Serial.println(version*0.1);
     delay(100);
   }
 
@@ -192,7 +192,7 @@ void setup() {
   if (result!=0){  // result will be > 0 if RFM69CW is found
     RF_STATUS = 1;
   } else {
-    if (debug) Serial.println("RFM69CW NOT Detected");
+    if (debug) Serial.println("RFM NOT Detected");
     RF_STATUS =0;
   }
   
