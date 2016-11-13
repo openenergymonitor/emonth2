@@ -1,5 +1,5 @@
 /*
-  emonTH Low Power SI7021 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
+  emonTH V2 Low Power SI7021 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
 
   Si7201 = internal temperature & Humidity
   DS18B20 = External temperature
@@ -15,7 +15,7 @@
 
   Libraries required:
    - see platformio.ini
-   - recommend compiling with platformIO for auto library download
+   - recommend compiling with platformIO for auto library download https://guide.openenergymonitor.org/technical/compiling
    - Arduino IDE can be used to compile but libs will need to be manually downloaded
 
   Recommended node ID allocation
@@ -30,8 +30,9 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
-  V3.1.0   - 18Oct16 test for RFM69CW and SI7201 at startup, allow serial use without RF prescent
-  V3.0.0   - Oct16 Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
+  V3.2.0   - (13/11/16) run-time serial nodeID config
+  V3.1.0   - (19/10/16) Test for RFM69CW and SI7201 at startup, allow serial use without RF prescent
+  V3.0.0   - (xx/10/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
   ^^^ emonTH V2.0 hardware ^^^
   V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
   V2.6   - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
@@ -60,7 +61,7 @@
 boolean debug=1;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
-const byte version = 30;                                              // firmware version divided by 10 e,g 16 = V1.6
+const byte version = 32;                                              // firmware version divided by 10 e,g 16 = V1.6
 // These variables control the transmit timing of the emonTH
 const unsigned long WDT_PERIOD = 80;                                  // mseconds.
 const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
@@ -73,12 +74,12 @@ const  unsigned long PULSE_MAX_DURATION = 50;
 #include <JeeLib.h>                                                   // https://github.com/jcw/jeelib
 #include <RF69_avr.h>
 #define REG_SYNCVALUE1      0x2F
-boolean rfm69cw_status;
+boolean RF_STATUS;
 
 
-#define RF_freq RF12_433MHZ                                           // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
-int nodeID = 23;                                                      // EmonTH temperature RFM12B node ID - should be unique on network
-const int networkGroup = 210;                                         // EmonTH RFM12B wireless network group - needs to be same as emonBase and emonGLCD
+byte RF_freq=RF12_433MHZ;                                           // Frequency of RF12B module can be RF12_433MHZ, RF12_868MHZ or RF12_915MHZ. You should use the one matching the module you have.
+byte nodeID = 23;                                                      // EmonTH temperature RFM12B node ID - should be unique on network
+int networkGroup = 210;                                         // EmonTH RFM12B wireless network group - needs to be same as emonBase and emonGLCD
                                                                       // DS18B20 resolution 9,10,11 or 12bit corresponding to (0.5, 0.25, 0.125, 0.0625 degrees C LSB),
                                                                       // lower resolution means lower power
 
@@ -103,9 +104,9 @@ const byte LED=            9;
 const byte BATT_ADC=       1;
 const byte DIP_switch1=    7;
 const byte DIP_switch2=    8;
-const byte pulse_countINT= 1;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
-const byte pulse_count_pin=3;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4 on emonTH V1.5 - Change to INT0 DIG2 on emonTH V1.4
-#define ONE_WIRE_BUS       17                                        // D19 emonTH V1.5
+const byte pulse_countINT= 1;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4
+const byte pulse_count_pin=3;                                        // INT 1 / Dig 3 Screw Terminal Block Number 4
+#define ONE_WIRE_BUS       17
 const byte DHT22_PWR=       6;                                      // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins
 const byte DHT22_DATA=      16;                                     // Not used in emonTH V2.0, 10K resistor R1 connects DHT22 pins.
 
@@ -115,7 +116,7 @@ boolean DS18B20;                                                      // create 
 
 // Note: Please update emonhub configuration guide on OEM wide packet structure change:
 // https://github.com/openenergymonitor/emonhub/blob/emon-pi/configuration.md
-typedef struct {                                                      // RFM12B RF payload datastructure
+typedef struct {                                                      // RFM RF payload datastructure
   int temp;
   int temp_external;
   int humidity;
@@ -132,8 +133,18 @@ volatile unsigned long pulseCount;
 unsigned long WDT_number;
 boolean  p;
 
-unsigned long now = 0;
+unsigned long now, start;
 const byte SLAVE_ADDRESS = 42;
+
+const char helpText1[] PROGMEM =                                 // Available Serial Commands
+"\n"
+"Available commands:\n"
+"  <nn> i     - set node IDs (standard node ids are 1..30)\n"
+"  <n> b      - set MHz band (4 = 433, 8 = 868, 9 = 915)\n"
+"  <nnn> g    - set network group (RFM12 only allows 212, 0 = any)\n"
+"  s          - save config to EEPROM\n"
+"  v          - Show firmware version\n"
+;
 //################################################################################################################################
 //################################################################################################################################
 #ifndef UNIT_TEST // IMPORTANT LINE! // http://docs.platformio.org/en/stable/plus/unit-testing.html
@@ -169,11 +180,42 @@ void setup() {
     Serial.begin(115200);
     Serial.println("OpenEnergyMonitor.org");
     Serial.print("emonTH - Firmware V"); Serial.println(version*0.1);
-    #if (RF69_COMPAT)
-    Serial.println("RFM69CW: ");
-    #else
-    Serial.println("RFM12B: ");
-    #endif
+    delay(100);
+  }
+
+  // Test for RFM69CW and int with test sequence if found
+  spiInit();
+  writeReg(REG_SYNCVALUE1, 0xAA);
+  int result = readReg(REG_SYNCVALUE1);
+  writeReg(REG_SYNCVALUE1, 0x55);
+  result = result + readReg(REG_SYNCVALUE1);
+  if (result!=0){  // result will be > 0 if RFM69CW is found
+    RF_STATUS = 1;
+  } else {
+    if (debug) Serial.println("RFM69CW NOT Detected");
+    RF_STATUS =0;
+  }
+  
+  
+  
+  if (RF_STATUS==1){
+    load_config();                                                        // Load RF config from EEPROM (if any exist
+    rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
+    if (debug==1) Serial.println("RFM Started");
+    // Send RFM69CW test sequence (for factory testing)
+    for (int i=10; i>-1; i--)
+    {
+      emonth.temp=i;
+      rf12_sendNow(0, &emonth, sizeof emonth);
+      delay(100);
+    }
+    rf12_sendWait(2);
+    emonth.temp=0;
+    // end of factory test sequence
+    rf12_sleep(RF12_SLEEP);
+  }
+  
+  if (debug==1){
     Serial.print("Node: ");
     Serial.print(nodeID);
     Serial.print(" Freq: ");
@@ -182,34 +224,7 @@ void setup() {
     if (RF_freq == RF12_915MHZ) Serial.print("915Mhz");
     Serial.print(" Network: ");
     Serial.println(networkGroup);
-    delay(100);
-  }
-
-    // Test for RFM69CW and int with test sequence if found
-    spiInit();
-    writeReg(REG_SYNCVALUE1, 0xAA);
-    int result = readReg(REG_SYNCVALUE1);
-    writeReg(REG_SYNCVALUE1, 0x55);
-    result = result + readReg(REG_SYNCVALUE1);
-    if (result!=0){  // result will be > 0 if RFM69CW is found
-      rfm69cw_status = 1;
-      rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
-      if (debug==1) Serial.println("RFM Started");
-      // Send RFM69CW test sequence (for factory testing)
-      for (int i=10; i>-1; i--)
-      {
-        emonth.temp=i;
-        rf12_sendNow(0, &emonth, sizeof emonth);
-        delay(100);
-      }
-      rf12_sendWait(2);
-      emonth.temp=0;
-      // end of factory test sequence
-      rf12_sleep(RF12_SLEEP);
-    } else {
-      if (debug) Serial.println("RFM69CW NOT Detected");
-      rfm69cw_status =0;
-    }
+ }
 
   pinMode(DS18B20_PWR,OUTPUT);
   pinMode(BATT_ADC, INPUT);
@@ -279,6 +294,32 @@ void setup() {
   WDT_number=720;
   p = 0;
   attachInterrupt(pulse_countINT, onPulse, RISING);
+  
+  //################################################################################################################################
+  // RF Config mode
+  //################################################################################################################################
+  if (RF_STATUS==1){
+    Serial.println("");
+    Serial.println("'+++' then [Enter] for RF config mode");
+    Serial.println("waiting 5s...");
+    start = millis();
+    while (millis() < (start + 5000)){
+      // If serial input of keyword string '+++' is entered during 5s power-up then enter config mode
+      if (Serial.available()){
+        if ( Serial.readString() == "+++\r\n"){
+          Serial.println("Entering config mode...");
+          showString(helpText1);
+          // char c[]="v"
+          config(char('v'));
+          while(1){
+            if (Serial.available()){
+              config(Serial.read());
+            }
+          }
+        }
+      }
+    }
+  }
 
   //################################################################################################################################
   // Power Save  - turn off what we don't need - http://www.nongnu.org/avr-libc/user-manual/group__avr__power.html
@@ -291,7 +332,7 @@ void setup() {
   // power_timer0_disable();              //don't disable necessary for the DS18B20 library
 
   // Only turn off LED if both sensor and RF69CW are working
-  if ((rfm69cw_status) && (SI7021_status)){
+  if ((RF_STATUS) && (SI7021_status)){
     digitalWrite(LED,LOW);                  // turn off LED to indciate end setup
   }
 } // end of setup
@@ -358,7 +399,7 @@ void loop()
 
 
     // Send data via RF
-    if (rfm69cw_status){
+    if (RF_STATUS){
       power_spi_enable();
       rf12_sleep(RF12_WAKEUP);
       dodelay(30);                                   // wait for module to wakup
