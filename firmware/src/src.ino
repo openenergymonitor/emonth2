@@ -184,24 +184,36 @@ void setup() {
   }
 
   // Test for RFM69CW and int with test sequence if found
-  spiInit();
-  writeReg(REG_SYNCVALUE1, 0xAA);
-  int result = readReg(REG_SYNCVALUE1);
-  writeReg(REG_SYNCVALUE1, 0x55);
-  result = result + readReg(REG_SYNCVALUE1);
-  if (result!=0){  // result will be > 0 if RFM69CW is found
-    RF_STATUS = 1;
-  } else {
-    if (debug) Serial.println("RFM NOT Detected");
-    RF_STATUS =0;
-  }
-  
-  
+  // spiInit();
+  //writeReg(REG_SYNCVALUE1, 0xAA);
+  // int result = readReg(REG_SYNCVALUE1); //CAUSED RFM TO HANG
+  // writeReg(REG_SYNCVALUE1, 0x55);
+   //result = result + readReg(REG_SYNCVALUE1);
+  // readReg(REG_SYNCVALUE1);
+  // if (result!=0){  // result will be > 0 if RFM69CW is found
+    // RF_STATUS = 1;
+  // } else {
+    // if (debug) Serial.println("RFM NOT Detected");
+    // RF_STATUS =0;
+  // }
+ RF_STATUS=1;
   
   if (RF_STATUS==1){
     load_config();                                                        // Load RF config from EEPROM (if any exist
+    if (debug) Serial.println("Int RFM...");
     rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
-    if (debug==1) Serial.println("RFM Started");
+    
+    if (debug){
+      Serial.println("RFM Started");
+      Serial.print("Node: ");
+      Serial.print(nodeID);
+      Serial.print(" Freq: ");
+      if (RF_freq == RF12_433MHZ) Serial.print("433Mhz");
+      if (RF_freq == RF12_868MHZ) Serial.print("868Mhz");
+      if (RF_freq == RF12_915MHZ) Serial.print("915Mhz");
+      Serial.print(" Network: ");
+      Serial.println(networkGroup);
+    }
     // Send RFM69CW test sequence (for factory testing)
     for (int i=10; i>-1; i--)
     {
@@ -214,17 +226,6 @@ void setup() {
     // end of factory test sequence
     rf12_sleep(RF12_SLEEP);
   }
-  
-  if (debug==1){
-    Serial.print("Node: ");
-    Serial.print(nodeID);
-    Serial.print(" Freq: ");
-    if (RF_freq == RF12_433MHZ) Serial.print("433Mhz");
-    if (RF_freq == RF12_868MHZ) Serial.print("868Mhz");
-    if (RF_freq == RF12_915MHZ) Serial.print("915Mhz");
-    Serial.print(" Network: ");
-    Serial.println(networkGroup);
- }
 
   pinMode(DS18B20_PWR,OUTPUT);
   pinMode(BATT_ADC, INPUT);
