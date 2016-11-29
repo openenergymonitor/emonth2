@@ -4,19 +4,26 @@
 
 **Low power wireless temperature and humidity node**
 
-V2.0 hardware revision adds support for SI7021 temperature and humidity. This sensor brings performance and power savings over the DHT22, see `sensor_test` folder of this repo for sensor evaluation and comparison.
+*V2.0 hardware revision adds support for SI7021 temperature and humidity. This sensor brings performance and power savings over the DHT22, see [sensor](sensor) folder of this repo for sensor evaluation and comparison.*
 
-<<<<<<< HEAD
-![emonTH V2](hardware/emonth2.png)
-=======
+The emonTH V2 is an open-source, wireless, battery powered temperature and humidity monitoring node.
+
+Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emonBase web-connected base-station for logging to Emoncms for data logging, processing and graphing.
+
+
+![emonTH V2](hardware/emonth2.jpg)
+
+
 ### Open-Hardware 
 
-- Hardware schematic & CAD files are in the `hardware` folder of thisw repo
+- Hardware schematic & CAD files are in the `hardware` folder of this repo
 - See [emonTH V1 Technical Wiki](https://wiki.openenergymonitor.org/index.php/EmonTH_V1.5) for more hardware design notes.
->>>>>>> b956573eccf6fa67f0026f2d06bd417c4f487087
+
 
 ### Related Blog Posts
 
+
+- [Introducing emonTH V2](https://blog.openenergymonitor.org/2016/11/introducing emonth-v2)
 
 - [Optical Pulse Counting with emonTH](https://blog.openenergymonitor.org/2015/09/optical-pulse-counting-with-emonth/)
 - [emonTH V1 Prototype](https://blog.openenergymonitor.org/2013/06/emonth-prototype/)
