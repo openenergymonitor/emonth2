@@ -9,8 +9,11 @@ install:
 - pip install -U platformio
 script:
 - platformio run -d firmware -e emonth2_deploy
+
 deploy:
   provider: releases
+  skip_cleanup: true
+  overwrite: true
   api_key:
     secure: nSzsNZeeR5wKud3CHP1MD3r9Uc9vy0hE4ZBLz0U3ATpcpUfh/WB15axs6wU1rOot8mxCo8+FLAhXt0RGfw3kZmEdId/VyBxmunOFDX4hGmXPzCi7ov9RXFsYWKuKOo9owodir+Iu0xF+UrzBKmPKATuRcc5JyW36IdHjFgG1ru41eNMWPk/A4Nre1yWpPh6gK/Fadl261/uuh2hfZbce48yRpzvAjdKWPXPZREjONZi8vwLBLjpS+s9YMaIWvZh+zYjM+jYpPB5MB+R8bjRi9kFkFwTjj0UcI1k/XJ+drdcNKuBfGiHlKu0ACt7HsO5uQWj/PTzy1LQnB45Rf4Dw6qEOIoxPBvlq5gt972LaAuLP5lldAlTcd+pvEntqbe2ziXSaWwTy2/wRx5Bx6xxgB7TSQ7J3JoPNSR9EGY4/3NIosK+4BTl77L7jVhLLxRopxge0PSs7/qej0ZhPJ5JdGWmVlATNZ006PEKdqwiUe+lyEsuuBqBqSlXgBwW1g2jZdkV+dwgpsF9w4MZW7ePFg0xvUEDIYFEs1Jv1ydrVkiRohXzwxZUbK+2xWIAEEiGXg3YR57fzDCCPjfGUHAMCLHeKWJd2SAFgOOXV6Hb2ztlCpLLy9wdL2KXTvDe5Vx1cKxADkW2ixRF0KR9rlCMdmTMmYsJfiUprTpUOQhhXXqs=
   file: firmware/.pioenvs/emonth2_deploy/firmware.hex

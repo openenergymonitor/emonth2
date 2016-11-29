@@ -6,7 +6,14 @@
 
 V2.0 hardware revision adds support for SI7021 temperature and humidity. This sensor brings performance and power savings over the DHT22, see `sensor_test` folder of this repo for sensor evaluation and comparison.
 
+<<<<<<< HEAD
 ![emonTH V2](hardware/emonth2.png)
+=======
+### Open-Hardware 
+
+- Hardware schematic & CAD files are in the `hardware` folder of thisw repo
+- See [emonTH V1 Technical Wiki](https://wiki.openenergymonitor.org/index.php/EmonTH_V1.5) for more hardware design notes.
+>>>>>>> b956573eccf6fa67f0026f2d06bd417c4f487087
 
 ### Related Blog Posts
 
