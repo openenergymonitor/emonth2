@@ -65,7 +65,7 @@ static void config (char c) {
         break;
 
       case 'v': // print firmware version
-        Serial.print(F("[emonTx FW: V")); Serial.print(version*0.1); Serial.print(F("]"));
+        Serial.print(F("[emonTH FW: V")); Serial.print(version*0.1); Serial.print(F("]"));
         break;
       
       default:
