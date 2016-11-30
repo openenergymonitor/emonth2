@@ -30,6 +30,7 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
+  V3.2.1   - (30/11/16) Fix emonTx port typo
   V3.2.0   - (13/11/16) run-time serial nodeID config
   V3.1.0   - (19/10/16) Test for RFM69CW and SI7201 at startup, allow serial use without RF prescent
   V3.0.0   - (xx/10/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
