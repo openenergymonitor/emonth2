@@ -30,8 +30,9 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
+  V3.2.2   - (12/05/17) Fix DIP switch nodeID not being read when EEPROM is configures
   V3.2.1   - (30/11/16) Fix emonTx port typo
-  V3.2.0   - (13/11/16) run-time serial nodeID config
+  V3.2.0   - (13/11/16) Run-time serial nodeID config
   V3.1.0   - (19/10/16) Test for RFM69CW and SI7201 at startup, allow serial use without RF prescent
   V3.0.0   - (xx/10/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
   ^^^ emonTH V2.0 hardware ^^^
@@ -62,7 +63,7 @@
 boolean debug=1;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
-const byte version = 32;                                              // firmware version divided by 10 e,g 16 = V1.6
+const byte version = 322;                                              // firmware version divided by 10 e,g 16 = V1.6
 // These variables control the transmit timing of the emonTH
 const unsigned long WDT_PERIOD = 80;                                  // mseconds.
 const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
@@ -171,10 +172,6 @@ void setup() {
   boolean DIP1 = digitalRead(DIP_switch1);
   boolean DIP2 = digitalRead(DIP_switch2);
 
-  if ((DIP1 == HIGH) && (DIP2 == HIGH)) nodeID=nodeID;
-  if ((DIP1 == LOW) && (DIP2 == HIGH)) nodeID=nodeID+1;
-  if ((DIP1 == HIGH) && (DIP2 == LOW)) nodeID=nodeID+2;
-  if ((DIP1 == LOW) && (DIP2 == LOW)) nodeID=nodeID+3;
 
   if (debug==1)
   {
@@ -198,12 +195,18 @@ void setup() {
     // RF_STATUS =0;
   // }
  RF_STATUS=1;
-  
+
   if (RF_STATUS==1){
     load_config();                                                        // Load RF config from EEPROM (if any exist
     if (debug) Serial.println("Int RFM...");
     rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
-    
+
+    // Add effect of DIP switch positions to nodeID
+    if ((DIP1 == HIGH) && (DIP2 == HIGH)) nodeID=nodeID;
+    if ((DIP1 == LOW) && (DIP2 == HIGH)) nodeID=nodeID+1;
+    if ((DIP1 == HIGH) && (DIP2 == LOW)) nodeID=nodeID+2;
+    if ((DIP1 == LOW) && (DIP2 == LOW)) nodeID=nodeID+3;
+
     if (debug){
       Serial.println("RFM Started");
       Serial.print("Node: ");
@@ -296,7 +299,7 @@ void setup() {
   WDT_number=720;
   p = 0;
   attachInterrupt(pulse_countINT, onPulse, RISING);
-  
+
   //################################################################################################################################
   // RF Config mode
   //################################################################################################################################

@@ -5,7 +5,7 @@
 byte value;
 
 static void load_config(){
-  
+
   byte flag=0;
   // Read nodeID
   if (EEPROM.read(0) != 255){                                // 255 = EEPROM default (blank) value
@@ -20,18 +20,18 @@ static void load_config(){
     networkGroup = EEPROM.read(2);
     flag++;
   }
-  
+
   if (flag > 0){
     Serial.println("Loaded EEPROM RF config >");
   }
   else {
     Serial.println("No EEPROM config");
   }
-  
-  }
+
+}
 
 static void config (char c) {
-  
+
   if ('0' <= c && c <= '9') {
     value = 10 * value + c - '0';
     return;
@@ -53,7 +53,7 @@ static void config (char c) {
           RF_freq = value;
         }
         break;
-    
+
       case 'g': // set network group
         if (value>=0){
           networkGroup = value;
@@ -67,7 +67,7 @@ static void config (char c) {
       case 'v': // print firmware version
         Serial.print(F("[emonTH FW: V")); Serial.print(version*0.1); Serial.print(F("]"));
         break;
-      
+
       default:
         showString(helpText1);
       } //end case
@@ -86,9 +86,9 @@ static void config (char c) {
                    RF_freq == RF12_915MHZ ? 915 : 0);
       Serial.print(F(" MHz"));
     }
-    
+
     Serial.println(F(" "));
-    
+
   } // end c > ' '
   value = 0;
 
