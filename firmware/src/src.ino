@@ -63,7 +63,7 @@
 boolean debug=1;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
-const byte version = 322;                                              // firmware version divided by 10 e,g 16 = V1.6
+const unsigned int  version = 321;                                              // firmware version divided by 10 e,g 16 = V1.6
 // These variables control the transmit timing of the emonTH
 const unsigned long WDT_PERIOD = 80;                                  // mseconds.
 const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
@@ -177,7 +177,7 @@ void setup() {
   {
     Serial.begin(115200);
     Serial.println("OpenEnergyMonitor.org");
-    Serial.print("emonTH FW: V"); Serial.println(version*0.1);
+    Serial.print("emonTH FW: V"); Serial.println(version);
     delay(100);
   }
 
