@@ -30,6 +30,7 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
+  V3.2.3   - (17/07/17) Fix DIP switch had no effect
   V3.2.2   - (12/05/17) Fix DIP switch nodeID not being read when EEPROM is configures
   V3.2.1   - (30/11/16) Fix emonTx port typo
   V3.2.0   - (13/11/16) Run-time serial nodeID config
@@ -63,7 +64,7 @@
 boolean debug=1;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
-const unsigned int  version = 321;                                              // firmware version divided by 10 e,g 16 = V1.6
+const unsigned int  version = 323;                                              // firmware version divided by 10 e,g 16 = V1.6
 // These variables control the transmit timing of the emonTH
 const unsigned long WDT_PERIOD = 80;                                  // mseconds.
 const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
@@ -197,15 +198,16 @@ void setup() {
  RF_STATUS=1;
 
   if (RF_STATUS==1){
-    load_config();                                                        // Load RF config from EEPROM (if any exist
-    if (debug) Serial.println("Int RFM...");
-    rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
+    load_config();                                                        // Load RF config from EEPROM (if any exist)
 
     // Add effect of DIP switch positions to nodeID
     if ((DIP1 == HIGH) && (DIP2 == HIGH)) nodeID=nodeID;
     if ((DIP1 == LOW) && (DIP2 == HIGH)) nodeID=nodeID+1;
     if ((DIP1 == HIGH) && (DIP2 == LOW)) nodeID=nodeID+2;
     if ((DIP1 == LOW) && (DIP2 == LOW)) nodeID=nodeID+3;
+
+    if (debug) Serial.println("Int RFM...");
+    rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
 
     if (debug){
       Serial.println("RFM Started");
