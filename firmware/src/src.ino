@@ -61,14 +61,16 @@
          units = C,C,%,V,p
   */
 // -------------------------------------------------------------------------------------------------------------
-boolean debug=1;                                                      // Set to 1 to few debug serial output
+//SAVE BATTERY set debug 0
+boolean debug=0;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
-const unsigned int  version = 323;                                    // firmware version
+const unsigned int  version = 623;                                    // firmware version
 // These variables control the transmit timing of the emonTH
-const unsigned long WDT_PERIOD = 80;                                  // mseconds.
-const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
-                                                                      // 690x 80 = 55.2 seconds (it needs to be about 5s less than the record interval in emoncms)
+const unsigned long WDT_PERIOD = 80;  // mseconds.
+// SAVE BATTERY post every 5min instead of 60s
+const unsigned long WDT_MAX_NUMBER = 3749;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
+// 3687 * 80 = 294960 ms = 294.9s (5s less than 300s = 5min)
 const  unsigned long PULSE_MAX_NUMBER = 100;                          // Data sent after PULSE_MAX_NUMBER pulses
 const  unsigned long PULSE_MAX_DURATION = 50;
 
@@ -124,7 +126,7 @@ typedef struct {                                                      // RFM RF 
   int temp_external;
   int humidity;
   int battery;
-  unsigned long pulsecount;
+  // unsigned long pulsecount; REMOVE TO SAVE BATTERY
 } Payload;
 Payload emonth;
 
@@ -174,13 +176,11 @@ void setup() {
   boolean DIP2 = digitalRead(DIP_switch2);
 
 
-  if (debug==1)
-  {
     Serial.begin(115200);
     Serial.println("OpenEnergyMonitor.org");
-    Serial.print("emonTH FW: V"); Serial.println(version);
+    Serial.print("emonTH CUSTOM FW: V"); Serial.println(version);
     delay(100);
-  }
+  
 
   // Test for RFM69CW and int with test sequence if found
   // spiInit();
@@ -209,7 +209,7 @@ void setup() {
     if (debug) Serial.println("Int RFM...");
     rf12_initialize(nodeID, RF_freq, networkGroup);                       // Initialize RFM
 
-    if (debug){
+    if (1){
       Serial.println("RFM Started");
       Serial.print("Node: ");
       Serial.print(nodeID);
@@ -240,7 +240,7 @@ void setup() {
   //################################################################################################################################
   // Setup and for presence of si7201
   //################################################################################################################################
-  if (debug==1) Serial.println("Int SI7201..");
+  if (1) Serial.println("Int SI7201..");
 
   // check if the I2C lines are HIGH
   if (digitalRead(SDA) == HIGH || digitalRead(SCL) == HIGH)
@@ -249,7 +249,7 @@ void setup() {
     int deviceid = SI7021_sensor.getDeviceId();
     if (deviceid!=0) {
       SI7021_status=1;
-      if (debug){
+      if (1){
         si7021_env data = SI7021_sensor.getHumidityAndTemperature();
         Serial.print("SI7021 Started, ID: ");
         Serial.println(deviceid);
@@ -259,12 +259,12 @@ void setup() {
     }
     else {
       SI7021_status=0;
-      if (debug) Serial.println("SI7021 Error");
+      if (1) Serial.println("SI7021 Error");
     }
   }
   else {
     SI7021_status=0;
-    if (debug) Serial.println("SI7021 Error");
+    if (1) Serial.println("SI7021 Error");
   }
   //################################################################################################################################
   // Setup and for presence of DS18B20
@@ -280,27 +280,27 @@ void setup() {
 
   if (numSensors==0)
   {
-    if (debug==1) Serial.println("No DS18B20");
+    if (1) Serial.println("No DS18B20");
     DS18B20=0;
   }
   else
   {
     DS18B20=1;
-    if (debug==1) {
+    if (1) {
       Serial.print(numSensors); Serial.println(" DS18B20");
     }
   }
-  if (debug==1) delay(100);
+  if (1) delay(100);
 
 
   //################################################################################################################################
   // Interrupt pulse counting setup
   //################################################################################################################################
-  emonth.pulsecount = 0;
+  // emonth.pulsecount = 0; SAVE BATTERY
   pulseCount = 0;
   WDT_number=720;
   p = 0;
-  attachInterrupt(pulse_countINT, onPulse, RISING);
+  // attachInterrupt(pulse_countINT, onPulse, RISING); //SAVE BATTERY
 
   //################################################################################################################################
   // RF Config mode
@@ -342,6 +342,12 @@ void setup() {
   if ((RF_STATUS) && (SI7021_status)){
     digitalWrite(LED,LOW);                  // turn off LED to indciate end setup
   }
+  
+  if (debug==0){
+    Serial.println("DEBUG DISABLED");
+    Serial.end();
+  }
+  
 } // end of setup
 
 
@@ -360,12 +366,8 @@ void loop()
     WDT_number++;
   }
 
-  if (WDT_number>=WDT_MAX_NUMBER || pulseCount>=PULSE_MAX_NUMBER)
+  if (WDT_number>=WDT_MAX_NUMBER)
   {
-    cli();
-    emonth.pulsecount += (unsigned int) pulseCount;
-    pulseCount = 0;
-    sei();
 
 
     if (DS18B20==1)
@@ -440,10 +442,10 @@ void loop()
         Serial.print("humidity:");Serial.print(emonth.humidity); Serial.print(",");
       }
       Serial.print("batt:"); Serial.print(emonth.battery);
-      if (emonth.pulsecount > 0) {
-        Serial.print(",");
-        Serial.print("pulse:"); Serial.print(emonth.pulsecount);
-      }
+      // if (emonth.pulsecount > 0) {
+      //   Serial.print(",");
+      //   Serial.print("pulse:"); Serial.print(emonth.pulsecount);
+      // }
       Serial.println();
       delay(5);
     } // end serial print debug
@@ -469,12 +471,13 @@ void dodelay(unsigned int ms)
   ADMUX=oldADMUX;
 }
 
-// The interrupt routine - runs each time a rising edge of a pulse is detected
-void onPulse()
-{
-  p=1;                                       // flag for new pulse set to true
-  pulseCount++;                              // number of pulses since the last RF sent
-}
+// SAVE BATTERY
+// // The interrupt routine - runs each time a rising edge of a pulse is detected
+// void onPulse()
+// {
+//   p=1;                                       // flag for new pulse set to true
+//   pulseCount++;                              // number of pulses since the last RF sent
+// }
 
 // Used to test for RFM69CW prescence
 static void writeReg (uint8_t addr, uint8_t value) {
