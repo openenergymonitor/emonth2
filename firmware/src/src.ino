@@ -51,14 +51,14 @@
   See: https://github.com/openenergymonitor/emonhub/blob/emon-pi/configuration.md
 
     [[23]]
-      nodename = emonTH_5
+      nodename = emonTH_5-custom
       firmware = V2.x_emonTH_DHT22_DS18B20_RFM69CW_Pulse
       hardware = emonTH_(Node_ID_Switch_DIP1:OFF_DIP2:OFF)
       [[[rx]]]
-         names = temperature, external temperature, humidity, battery, pulseCount
-         datacodes = h,h,h,h,L
-         scales = 0.1,0.1,0.1,0.1,1
-         units = C,C,%,V,p
+         names = temperature, external temperature, humidity, battery
+         datacodes = h,h,h,h
+         scales = 0.1,0.1,0.1,0.1
+         units = C,C,%,V
   */
 // -------------------------------------------------------------------------------------------------------------
 //SAVE BATTERY set debug 0
