@@ -1,7 +1,7 @@
 /*
   emonTH V2 Low Power SI7021 Humidity & Temperature, DS18B20 Temperature & Pulse counting Node Example
 
-  Si7201 = internal temperature & Humidity
+  Si7021 = internal temperature & Humidity
   DS18B20 = External temperature
 
 
@@ -34,7 +34,7 @@
   V3.2.2   - (12/05/17) Fix DIP switch nodeID not being read when EEPROM is configures
   V3.2.1   - (30/11/16) Fix emonTx port typo
   V3.2.0   - (13/11/16) Run-time serial nodeID config
-  V3.1.0   - (19/10/16) Test for RFM69CW and SI7201 at startup, allow serial use without RF prescent
+  V3.1.0   - (19/10/16) Test for RFM69CW and SI7021 at startup, allow serial use without RF prescent
   V3.0.0   - (xx/10/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
   ^^^ emonTH V2.0 hardware ^^^
   V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
@@ -240,7 +240,7 @@ void setup() {
   //################################################################################################################################
   // Setup and for presence of si7201
   //################################################################################################################################
-  if (debug==1) Serial.println("Int SI7201..");
+  if (debug==1) Serial.println("Int SI7021..");
 
   // check if the I2C lines are HIGH
   if (digitalRead(SDA) == HIGH || digitalRead(SCL) == HIGH)
@@ -394,7 +394,7 @@ void loop()
     // See more https://community.openenergymonitor.org/t/emonth-battery-measurement-accuracy/1317
     //emonth.battery=int(analogRead(BATT_ADC)*3.222);
 
-    // Read SI7201
+    // Read SI7021
     // Read from SI7021 SPI temp & humidity sensor
     if (SI7021_status==1){
       power_twi_enable();
