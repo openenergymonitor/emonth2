@@ -14,7 +14,7 @@
 
 ## V2.0.1 (Aug 2016)
 
-- Add SI7201 temperature & humidity sensor (see `si7021_eval` folder in emonth2 repo)
+- Add SI7021 temperature & humidity sensor (see `si7021_eval` folder in emonth2 repo)
 - Re-jig port map from emonTH V1.5 to make available I2C pins for SI7021
 
 # Port Map
