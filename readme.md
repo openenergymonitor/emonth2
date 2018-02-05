@@ -38,6 +38,12 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 
 # Firmware
 
+## Pre-compiled 
+
+Either upload pre-compiled firmware (from github releases) using our [emonUpload tool](https://github.com/openenergymonitor/emonupload) or compile and upload
+
+## Compile & Upload
+
 PlatformIO is recommended as the easiest way to compile and upload Arduino compatible firmware for emonTH. One of the big advantages of using PlatformIO is all libraries can be automatically downloaded. Arduino IDE can also be used but libraries must be manually installed.
 
 ## Compile & Upload Firmware Using PlatformIO
