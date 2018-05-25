@@ -308,6 +308,7 @@ void setup() {
   if (RF_STATUS==1){
     Serial.println("");
     Serial.println("'+++' then [Enter] for RF config mode");
+    Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
     Serial.println("waiting 5s...");
     start = millis();
     while (millis() < (start + 5000)){
