@@ -42,22 +42,19 @@ static void config (char c) {
     switch (c) {
 
       case 'i': //set node ID
-        if (value){
+        if (value)
           nodeID = value;
         break;
-      }
 
       case 'b': // set band: 4 = 433, 8 = 868, 9 = 915
         value = bandToFreq(value);
-        if (value){
+        if (value)
           RF_freq = value;
-        }
         break;
 
       case 'g': // set network group
-        if (value>=0){
+        if (value>=0)
           networkGroup = value;
-        }
         break;
 
       case 's': // Save to EEPROM. Atemga328p has 1kb  EEPROM
