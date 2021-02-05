@@ -62,6 +62,8 @@
          units = C,C,%,V,p
   */
 // -------------------------------------------------------------------------------------------------------------
+#define EXTERNAL_TEMP_SENSORS 1                                       // Specify number of external temperature sensors that are connected
+
 boolean debug=1;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
@@ -122,7 +124,7 @@ boolean DS18B20;                                                      // create 
 // https://github.com/openenergymonitor/emonhub/blob/emon-pi/configuration.md
 typedef struct {                                                      // RFM RF payload datastructure
   int temp;
-  int temp_external;
+  int temp_external[EXTERNAL_TEMP_SENSORS];
   int humidity;
   int battery;
   unsigned long pulsecount;
@@ -376,12 +378,14 @@ void loop()
       for(int j=0;j<numSensors;j++) sensors.setResolution(allAddress[j], TEMPERATURE_PRECISION);      // and set the a to d conversion resolution of each.
       sensors.requestTemperatures();                                        // Send the command to get temperatures
       dodelay(ASYNC_DELAY); //Must wait for conversion, since we use ASYNC mode
-      float temp=(sensors.getTempC(allAddress[0]));
-      digitalWrite(DS18B20_PWR, LOW);
-      if ((temp<125.0) && (temp>-40.0))
-      {
-        emonth.temp_external=(temp*10);
+
+      for(int j=0;j<EXTERNAL_TEMP_SENSORS;j++) {
+        float temp=(sensors.getTempC(allAddress[j]));
+        if ((temp<125.0) && (temp>-40.0)) {
+          emonth.temp_external[j]=(temp*10);
+        }
       }
+      digitalWrite(DS18B20_PWR, LOW);
     }
 
     emonth.battery=int(analogRead(BATT_ADC)*0.0322);                    //read battery voltage, convert ADC to volts x10
@@ -435,7 +439,9 @@ void loop()
       Serial.print("temp:");Serial.print(emonth.temp); Serial.print(",");
 
       if (DS18B20){
-        Serial.print("tempex:");Serial.print(emonth.temp_external); Serial.print(",");
+        for(int j=0;j<EXTERNAL_TEMP_SENSORS;j++) {
+          Serial.print("tempex");Serial.print(j);Serial.print(":");Serial.print(emonth.temp_external[j]); Serial.print(",");
+        }
       }
 
       if (SI7021_status){
