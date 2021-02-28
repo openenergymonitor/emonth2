@@ -149,6 +149,9 @@ const char helpText1[] PROGMEM =                                 // Available Se
 "  s          - save config to EEPROM\n"
 "  v          - Show firmware version\n"
 ;
+
+static void showString(PGM_P s);                                      // Program space string
+
 //################################################################################################################################
 //################################################################################################################################
 #ifndef UNIT_TEST // IMPORTANT LINE! // http://docs.platformio.org/en/stable/plus/unit-testing.html
