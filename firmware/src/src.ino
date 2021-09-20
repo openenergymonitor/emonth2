@@ -30,6 +30,7 @@
   31	- Special allocation in JeeLib RFM12 driver - Node31 can communicate with nodes on any network group
   -------------------------------------------------------------------------------------------------------------
   Change log:
+  V3.2.5   - (20/09/21) Option for multiple external temperature sensors
   V3.2.4   - (25/05/18) Add prompt for serial config
   V3.2.3   - (17/07/17) Fix DIP switch had no effect
   V3.2.2   - (12/05/17) Fix DIP switch nodeID not being read when EEPROM is configures
@@ -67,7 +68,7 @@
 boolean debug=1;                                                      // Set to 1 to few debug serial output
 boolean flash_led=0;                                                  // Flash LED after each sample (battery drain) default=0
 
-const unsigned int  version = 324;                                    // firmware version
+const unsigned int  version = 325;                                    // firmware version
 // These variables control the transmit timing of the emonTH
 const unsigned long WDT_PERIOD = 80;                                  // mseconds.
 const unsigned long WDT_MAX_NUMBER = 690;                             // Data sent after WDT_MAX_NUMBER periods of WDT_PERIOD ms without pulses:
