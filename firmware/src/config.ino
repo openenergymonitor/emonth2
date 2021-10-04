@@ -1,4 +1,7 @@
-
+/*
+ * Configuration file for EmonTH_V2.ino  V3.2.6
+ *
+ */
 
 #include <EEPROM.h>
 
@@ -8,7 +11,7 @@ static void load_config(){
 
   byte flag=0;
   // Read nodeID
-  if (EEPROM.read(0) != 255){                                // 255 = EEPROM default (blank) value
+  if (EEPROM.read(0) != 255){                                          // 255 = EEPROM default (blank) value
     nodeID = EEPROM.read(0);
     flag++;
   }
@@ -46,15 +49,18 @@ static void config (char c) {
           nodeID = value;
         break;
 
+
       case 'b': // set band: 4 = 433, 8 = 868, 9 = 915
         value = bandToFreq(value);
-        if (value)
+        if (value){
           RF_freq = value;
+        }
         break;
 
       case 'g': // set network group
-        if (value>=0)
+        if (value>=0){
           networkGroup = value;
+        }
         break;
 
       case 's': // Save to EEPROM. Atemga328p has 1kb  EEPROM
