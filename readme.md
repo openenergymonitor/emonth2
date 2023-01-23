@@ -29,7 +29,7 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 - [emonTH V1 Prototype](https://blog.openenergymonitor.org/2013/06/emonth-prototype/)
 - [emonTH V1 Hardware Design](https://blog.openenergymonitor.org/2013/10/emonth-update-hardware/)
 - [emonTH V1 Software & Power Optimise](https://blog.openenergymonitor.org/2013/10/emonth-update-software-power/)
-- [emonTH Battery Choice Considerations](https://blog.openenergymonitor.org/2013/10/aa-battery-considerations/)
+- [emonTH Battery Choice Considerations](https://blog.openenergymonitor.org/2013/10/aa-battery/)
 
 ### Related Forum Posts
 
