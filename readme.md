@@ -13,39 +13,27 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 
 ![emonTH V2](docs/img/emonth2.png)
 
-
-### Open-Hardware 
-
-- Hardware schematic & CAD files are in the `hardware` folder of this repo
-
-### Documentation
+## Documentation
 
 - [Overview](https://docs.openenergymonitor.org/emonth2/overview.html)
 - [Installation](https://docs.openenergymonitor.org/emonth2/install.html)
 - [Technical](https://docs.openenergymonitor.org/emonth2/technical.html)
 
-### Related Blog Posts
+## Hardware
 
-- [emonTH V1 Prototype](https://blog.openenergymonitor.org/2013/06/emonth-prototype/)
-- [emonTH V1 Hardware Design](https://blog.openenergymonitor.org/2013/10/emonth-update-hardware/)
-- [emonTH V1 Software & Power Optimise](https://blog.openenergymonitor.org/2013/10/emonth-update-software-power/)
-- [emonTH Battery Choice Considerations](https://blog.openenergymonitor.org/2013/10/aa-battery/)
+- Hardware schematic & CAD files are in the `hardware` folder of this repo
 
-### Related Forum Posts
+## Firmware
 
-- [HTU21D Temperature and Humidity sensor, possible DHT22 replacement?](https://community.openenergymonitor.org/t/htu21d-temperature-and-humidity-sensor-possible-dht22-replacement/1106/21)
-
-# Firmware
-
-## Pre-compiled 
+### Pre-compiled 
 
 Either upload pre-compiled firmware (from github releases) using our [emonUpload tool](https://github.com/openenergymonitor/emonupload) or compile and upload
 
-## Compile & Upload
+### Compile & Upload
 
 PlatformIO is recommended as the easiest way to compile and upload Arduino compatible firmware for emonTH. One of the big advantages of using PlatformIO is all libraries can be automatically downloaded. Arduino IDE can also be used but libraries must be manually installed.
 
-## Compile & Upload Firmware Using PlatformIO
+### Compile & Upload Firmware Using PlatformIO
 
 For a full guide and installing and using PlatformIO (including visual IDE) see ['Compiling' User Guide Section](https://guide.openenergymonitor.org/technical/compiling). Assuming platformIO is installed
 
@@ -56,6 +44,6 @@ $ pio run
 $ pio -t upload
 ```
 
-# Hardware
+## Development
 
-emonTH hardware is fully open-source. See `hardware` folder of this repo for Gerbers, Eagle CAD design, BOM & port map.
+The emonTH 2.0 builds on the earlier emonTH v1.x: https://github.com/openenergymonitor/emonth.
