@@ -11,7 +11,7 @@ The emonTH V2 is an open-source, wireless, battery powered temperature and humid
 Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emonBase web-connected base-station for logging to Emoncms for data logging, processing and graphing.
 
 
-![emonTH V2](hardware/emonth2.jpg)
+![emonTH V2](docs/img/emonth2.png)
 
 
 ### Open-Hardware 

@@ -2,13 +2,13 @@
 
 The motivation behind replacing the DHT22 Temperature & Humidity sensor used on the emonTH V1 with the Si7021 Temperature & Humidity sensor on the emonTH V2 was the power saving benefits.
 
-See the `sensor` folder in the emonth2 repo for a power consumption comparision between the DHT22 and Si7021.
+See the sensor folder in the emonTH2 repo for a power consumption comparision between the DHT22 and Si7021.
 
 This document contains real-world emonTH2 power consumption as measured using a multi-meter & scope resistor voltage drop method [explained in previous blog post](http://blog.openenergymonitor.org/2013/07/new-oscilloscope/).
 
 Here is a scope trace illustrating the emonTH power consumption during a sensor sample:
 
-![emonth2 power consumption](emonth2_power.png)
+![emonth2 power consumption](img/emonth2_power.png)
 
 1. Atmega328 wakes up, starts sensors and takes readings: 17.5ms @ 8.4mA
 
@@ -41,13 +41,13 @@ To summarise:
 
 \* *The 2 x AA batteries are connected in series but since uses emonTH uses a DC-DC converter capacity is effectivly 2xAA capacity (mius losses), [see forum post](https://community.openenergymonitor.org/t/emonth-v2/1696/18?u=glyn.hudson)*
 
-![emonth V2 estimated battery life](emonth2_batterylife_estimate.png)
+![emonth V2 estimated battery life](img/emonth2_batterylife_estimate.png)
 
 Given the measured power consumption the emonTh2 is estimated to have a battery life of 7.6 years!
 
 Plugging in the [power consumption figures from the emonTh V1](http://blog.openenergymonitor.org/2013/10/emonth-update-software-power/) (with DHT22) into the calculator a 1.4 year battery life is estimated.
 
-![emonth V1 estimated battery life](emonth_V1_estimated_batterylife.png)
+![emonth V1 estimated battery life](img/emonth_V1_estimated_batterylife.png)
 
 From [real world testing](http://blog.openenergymonitor.org/2015/02/real-world-emonth-battery-life) is been established that the emonTh V1 actually achieves a 8 month battery life. This is 57% less than the estimated figure.
 
