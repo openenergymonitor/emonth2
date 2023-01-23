@@ -18,11 +18,14 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 
 - Hardware schematic & CAD files are in the `hardware` folder of this repo
 
+### Documentation
+
+- [Overview](https://docs.openenergymonitor.org/emonth2/overview.html)
+- [Installation](https://docs.openenergymonitor.org/emonth2/install.html)
+- [Technical](https://docs.openenergymonitor.org/emonth2/technical.html)
+
 ### Related Blog Posts
 
-- [Introducing emonTH V2](http://blog.openenergymonitor.org/2016/09/emonth2/)
-
-- [Optical Pulse Counting with emonTH](https://blog.openenergymonitor.org/2015/09/optical-pulse-counting-with-emonth/)
 - [emonTH V1 Prototype](https://blog.openenergymonitor.org/2013/06/emonth-prototype/)
 - [emonTH V1 Hardware Design](https://blog.openenergymonitor.org/2013/10/emonth-update-hardware/)
 - [emonTH V1 Software & Power Optimise](https://blog.openenergymonitor.org/2013/10/emonth-update-software-power/)
