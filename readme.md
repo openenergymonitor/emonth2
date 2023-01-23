@@ -17,11 +17,8 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 ### Open-Hardware 
 
 - Hardware schematic & CAD files are in the `hardware` folder of this repo
-- See [emonTH V1 Technical Wiki](https://wiki.openenergymonitor.org/index.php/EmonTH_V1.5) for more hardware design notes.
-
 
 ### Related Blog Posts
-
 
 - [Introducing emonTH V2](http://blog.openenergymonitor.org/2016/09/emonth2/)
 
@@ -34,7 +31,6 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 ### Related Forum Posts
 
 - [HTU21D Temperature and Humidity sensor, possible DHT22 replacement?](https://community.openenergymonitor.org/t/htu21d-temperature-and-humidity-sensor-possible-dht22-replacement/1106/21)
-
 
 # Firmware
 
