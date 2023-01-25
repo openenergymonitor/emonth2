@@ -25,8 +25,8 @@ If more than one emonTH is to be used with the same base-station, each emonTH wi
 ### 3. Emoncms Setup
 
   - RF transmission from the emonTH will be picked up automatically and data will appear in local Emoncms Inputs page.
-  - If [Remote logging](/setup/remote) has been setup, data will also be posted to Emoncms.org.
-  - See guide [Log Locally](/setup/local) for an overview of logging inputs to feeds. For EmonTH inputs select a feed interval 60s or greater:
+  - If [Remote logging](../emoncms/intro-remote.md) has been setup, data will also be posted to Emoncms.org.
+  - See guide [Log Locally](../emoncms/intro-rpi.md) for an overview of logging inputs to feeds. For EmonTH inputs select a feed interval 60s or greater:
   
 ```{note}
 Important: the emonTH reports data at a 60s interval, it's important to log the data to emoncms with a 60s inerval as shown below.
