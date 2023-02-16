@@ -70,8 +70,8 @@
 // -------------------------------------------------------------------------------------------------------------
 #define NUM_EXTERNAL_TEMP_SENSORS 1                                    // Specify number of external temperature sensors that are connected.
                                                
-boolean debug=1;                                                       // Set to 1 to few debug serial output
-boolean flash_led=0;                                                   // Flash LED after each sample (battery drain) default=0
+boolean debug=0;                                                       // Set to 1 to few debug serial output
+boolean flash_led=1;                                                   // Flash LED after each sample (battery drain) default=0
 
 const unsigned int  version = 326 ;                                     // firmware version
 // These variables control the transmit timing of the emonTH
@@ -96,8 +96,8 @@ int networkGroup = 210;                                                // EmonTH
                                                                        // DS18B20 resolution 9,10,11 or 12bit corresponding to (0.5, 0.25, 0.125, 0.0625 degrees C LSB),
                                                                        // lower resolution means lower power
 
-const int TEMPERATURE_PRECISION=11;                                    // 9 (93.8ms),10 (187.5ms) ,11 (375ms) or 12 (750ms) bits equal to resplution of 0.5C, 0.25C, 0.125C and 0.0625C
-#define ASYNC_DELAY 375                                                // 9bit requres 95ms, 10bit 187ms, 11bit 375ms and 12bit resolution takes 750ms
+const int TEMPERATURE_PRECISION=12;                                    // 9 (93.8ms),10 (187.5ms) ,11 (375ms) or 12 (750ms) bits equal to resplution of 0.5C, 0.25C, 0.125C and 0.0625C
+#define ASYNC_DELAY 750                                                // 9bit requres 95ms, 10bit 187ms, 11bit 375ms and 12bit resolution takes 750ms
 // See block comment above for library info
 #include <avr/power.h>
 #include <avr/sleep.h>
