@@ -111,7 +111,7 @@ const unsigned long PULSE_MAX_NUMBER = 100;                            // Data s
 #define MAX_SENSORS 4                                                  // The maximum number of external temperature sensors.
                                                                        // (Only the first will be sent by radio without further changes.)
                                                                        
-#define EXTERNAL_TEMP_SENSORS 2                                        // Specify number of external temperature sensors that are connected                                                                      
+#define EXTERNAL_TEMP_SENSORS 1                                        // Specify number of external temperature sensors that are connected                                                                      
                                                                        
 #define FACTORYTESTGROUP 1                                             // Transmit the Factory Test on Grp 1 
                                                                        //   to avoid interference with recorded data at power-up.
