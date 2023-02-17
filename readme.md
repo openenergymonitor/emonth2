@@ -10,39 +10,15 @@ The emonTH V2 is an open-source, wireless, battery powered temperature and humid
 
 Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emonBase web-connected base-station for logging to Emoncms for data logging, processing and graphing.
 
-
 ![emonTH V2](docs/img/emonth2.png)
 
 ## Documentation
 
 - [Overview](https://docs.openenergymonitor.org/emonth2/overview.html)
 - [Installation](https://docs.openenergymonitor.org/emonth2/install.html)
+- [Firmware](https://docs.openenergymonitor.org/emonth2/firmware.html)
+- [Configuration](https://docs.openenergymonitor.org/emonth2/configuration.html)
 - [Technical](https://docs.openenergymonitor.org/emonth2/technical.html)
-
-## Hardware
-
-- Hardware schematic & CAD files are in the `hardware` folder of this repo
-
-## Firmware
-
-### Pre-compiled 
-
-Either upload pre-compiled firmware (from github releases) using our [emonUpload tool](https://github.com/openenergymonitor/emonupload) or compile and upload
-
-### Compile & Upload
-
-PlatformIO is recommended as the easiest way to compile and upload Arduino compatible firmware for emonTH. One of the big advantages of using PlatformIO is all libraries can be automatically downloaded. Arduino IDE can also be used but libraries must be manually installed.
-
-### Compile & Upload Firmware Using PlatformIO
-
-For a full guide and installing and using PlatformIO (including visual IDE) see ['Compiling' User Guide Section](https://guide.openenergymonitor.org/technical/compiling). Assuming platformIO is installed
-
-```
-$ git clone https://github.com/openenergymonitor/emonth2
-$ cd emonth2
-$ pio run
-$ pio -t upload
-```
 
 ## Development
 
