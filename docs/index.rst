@@ -6,4 +6,6 @@ emonTH2 User Guide
    
    Overview <overview.md>
    Install <install.md>
+   firmware.md
+   configuration.md
    Technical <technical.md>
