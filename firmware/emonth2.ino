@@ -120,7 +120,7 @@ const unsigned long PULSE_MAX_NUMBER = 100;                            // Data s
 //---------------------------- emonTH Settings - Stored in EEPROM and shared with config.ino ------------------------------------------------
 struct 
 {
-  byte RF_freq = RF69_433MHZ;                                          // Frequency of radio module can be RFM_433MHZ, RFM_868MHZ or RFM_915MHZ. 
+  byte RF_freq = RF69_433MHZ;                                          // Frequency of radio module can be RF69_433MHZ, RF69_868MHZ or RF69_915MHZ. 
   byte networkGroup = 210;                                             // Wireless network group, must be the same as emonBase / emonPi and emonGLCD. OEM default is 210
   byte  nodeID = 23;                                                   // Node ID for this sensor.
   byte  rf_on = 1;                                                     // RF/Serial output. Bit 0 set: RF on, bit 1 set: serial on.
