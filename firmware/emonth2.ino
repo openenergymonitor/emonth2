@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.0\n\r"};
+const char *firmware_version = {"4.1.1\n\r"};
 /*
 
   Change log:
+  V4.1.1   - (19/02/23) Fix missing frequency initialization
   V4.1.0   - (17/02/23) LowPowerLabs radio format option
   V4.0.0   - (10/07/21) Replace JeeLib with OEM RFM69nTxLib using RFM69 "Native" packet format, add emonEProm library support
   
@@ -242,7 +243,7 @@ void setup()
 #ifdef RFM69CW
     Serial.println("Init RFM...");
     #if RadioFormat == RFM69_LOW_POWER_LABS
-      radio.initialize(RF69_433MHZ,EEProm.nodeID,EEProm.networkGroup);  
+      radio.initialize(EEProm.RF_freq,EEProm.nodeID,EEProm.networkGroup);  
       radio.encrypt("89txbe4p8aik5kt3");                                                      // initialize RFM
       radio.setPowerLevel(EEProm.rfPower);
     #else
