@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.0\n\r"};
+const char *firmware_version = {"4.1.1\n\r"};
 /*
 
   Change log:
+  V4.1.1   - (19/02/23) Fix missing frequency initialization
   V4.1.0   - (17/02/23) LowPowerLabs radio format option
   V4.0.0   - (10/07/21) Replace JeeLib with OEM RFM69nTxLib using RFM69 "Native" packet format, add emonEProm library support
   
@@ -119,7 +120,7 @@ const unsigned long PULSE_MAX_NUMBER = 100;                            // Data s
 //---------------------------- emonTH Settings - Stored in EEPROM and shared with config.ino ------------------------------------------------
 struct 
 {
-  byte RF_freq = RF69_433MHZ;                                          // Frequency of radio module can be RFM_433MHZ, RFM_868MHZ or RFM_915MHZ. 
+  byte RF_freq = RF69_433MHZ;                                          // Frequency of radio module can be RF69_433MHZ, RF69_868MHZ or RF69_915MHZ. 
   byte networkGroup = 210;                                             // Wireless network group, must be the same as emonBase / emonPi and emonGLCD. OEM default is 210
   byte  nodeID = 23;                                                   // Node ID for this sensor.
   byte  rf_on = 1;                                                     // RF/Serial output. Bit 0 set: RF on, bit 1 set: serial on.
@@ -242,7 +243,7 @@ void setup()
 #ifdef RFM69CW
     Serial.println("Init RFM...");
     #if RadioFormat == RFM69_LOW_POWER_LABS
-      radio.initialize(RF69_433MHZ,EEProm.nodeID,EEProm.networkGroup);  
+      radio.initialize(EEProm.RF_freq,EEProm.nodeID,EEProm.networkGroup);  
       radio.encrypt("89txbe4p8aik5kt3");                                                      // initialize RFM
       radio.setPowerLevel(EEProm.rfPower);
     #else
