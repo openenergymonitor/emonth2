@@ -1,7 +1,5 @@
 # emonTH V2.0
 
-[![Build Status](https://travis-ci.org/openenergymonitor/emonth2.svg?branch=master)](https://travis-ci.org/openenergymonitor/emonth2)
-
 **Low power wireless temperature and humidity node**
 
 *V2.0 hardware revision adds support for SI7021 temperature and humidity. This sensor brings performance and power savings over the DHT22, see [sensor](sensor) folder of this repo for sensor evaluation and comparison.*
@@ -19,7 +17,3 @@ Data from the emonTH is transmitted via wireless RF (433MHz) to an emonPi / emon
 - [Firmware](https://docs.openenergymonitor.org/emonth2/firmware.html)
 - [Configuration](https://docs.openenergymonitor.org/emonth2/configuration.html)
 - [Technical](https://docs.openenergymonitor.org/emonth2/technical.html)
-
-## Development
-
-The emonTH 2.0 builds on the earlier emonTH v1.x: https://github.com/openenergymonitor/emonth.
