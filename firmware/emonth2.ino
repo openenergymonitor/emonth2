@@ -79,7 +79,8 @@ const char *firmware_version = {"4.1.2\n\r"};
 #define RFM69_JEELIB_NATIVE 2
 #define RFM69_LOW_POWER_LABS 3
 
-#define RadioFormat RFM69_LOW_POWER_LABS
+// Set in platformio.ini
+//#define RadioFormat RFM69_LOW_POWER_LABS
 
 bool flash_led = false;                                                // true = Flash LED after each sample (increases battery drain)
 
