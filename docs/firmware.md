@@ -24,6 +24,12 @@ Select port: `ttyUSB0`, Hardware: `emonTh2`, Radio format e.g: `RFM69 LowPowerLa
 
 Click `Update Firmware` to upload the firmware.
 
+## Upload using avrdude
+
+Pre compiled firmware can be uploaded using a USB to UART programmer and avrdude: 
+
+`avrdude -uV -c arduino -p ATMEGA328P -P /dev/ttyUSB0  -b 115200 -U flash:w:firmware.hex`
+
 ## How to compile and upload firmware
 
 ### PlatformIO Command Line
