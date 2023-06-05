@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.2\n\r"};
+const char *firmware_version = {"4.1.3\n\r"};
 /*
 
   Change log:
+  V4.1.3   - (05/06/23) Serial print tweaks to enable factory test 
   V4.1.2   - (27/02/23) Add option to used custom encrpytion key
   V4.1.1   - (19/02/23) Fix missing frequency initialization
   V4.1.0   - (17/02/23) LowPowerLabs radio format option
@@ -295,8 +296,7 @@ void setup()
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
       Serial.print("SI7021 Started, ID: ");
       Serial.println(deviceid);
-      Serial.print("SI7021 t: "); Serial.println(data.celsiusHundredths/100.0);
-      Serial.print("SI7021 h: "); Serial.println(data.humidityBasisPoints/100.0);
+      Serial.print("temp:"); Serial.print(data.celsiusHundredths/100.0); Serial.print(",humidity:"); Serial.println(data.humidityBasisPoints/100.0);
     }
     else 
     {
