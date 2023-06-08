@@ -14,7 +14,7 @@
   THIS SKETCH REQUIRES:
 
   Libraries required:
-   - see platformio.ini
+   - see platform io.ini
    - recommend compiling with platformIO for auto library download https://guide.openenergymonitor.org/technical/compiling
    - Arduino IDE can be used to compile but libs will need to be manually downloaded
 
@@ -31,11 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.3\n\r"};
+const char *firmware_version = {"4.1.3"};
 /*
 
   Change log:
-  V4.1.3   - (05/06/23) Serial print tweaks to enable factory test 
+  V4.1.3   - (05/06/23) Startup serial print streamline for factory test 
   V4.1.2   - (27/02/23) Add option to used custom encrpytion key
   V4.1.1   - (19/02/23) Fix missing frequency initialization
   V4.1.0   - (17/02/23) LowPowerLabs radio format option
@@ -234,7 +234,7 @@ void setup()
 
   Serial.begin(115200);
   Serial.println("OpenEnergyMonitor.org");
-  Serial.print("emonTH FW: V"); Serial.write(firmware_version);
+  Serial.print("emonTH FW: V"); Serial.println(firmware_version);
   delay(100);
 
   load_config(true);                                                   // Load RF config from EEPROM (if any exists)
@@ -338,14 +338,14 @@ void setup()
 
   digitalWrite(DS18B20_PWR, LOW);
 
-  if (numSensors) 
-  {
-    Serial.print(numSensors); 
-    Serial.println(" DS18B20");
-  }
-  else
-    Serial.println("No DS18B20");
-  Serial.println("");
+  // if (numSensors) 
+  // {
+  //   Serial.print(numSensors); 
+  //   Serial.println(" DS18B20");
+  // }
+  // else
+  //   Serial.println("No DS18B20");
+  // Serial.println("");
 
 
 
@@ -558,10 +558,10 @@ void onPulse()
 void printTemperatureSensorAddresses(void)
 {
   DeviceAddress *temperatureSensors = EEProm.allAddresses;
-  Serial.print(F("Temperature Sensors found = "));
+  Serial.print(F("DS18B20 found = "));
   Serial.print(numSensors);
   Serial.print(" of ");
-  Serial.print(MAX_SENSORS);
+  Serial.println(MAX_SENSORS);
   
   if (numSensors)
   {
@@ -581,11 +581,10 @@ void printTemperatureSensorAddresses(void)
           delay(5);
       }
   }
-  Serial.println();
-  Serial.print(F("Temperature measurement is"));
-  Serial.print(EEProm.temperatureEnabled?"":" NOT");
-  Serial.println(F(" enabled."));
-  Serial.println();
+  // Serial.println();
+  // Serial.print(F("DS18B20 measurement is"));
+  // Serial.print(EEProm.temperatureEnabled?"":" NOT");
+  // Serial.println(F(" enabled."));
   delay(5);
         
 }

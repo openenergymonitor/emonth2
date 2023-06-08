@@ -61,7 +61,6 @@ static void list_calibration(void)
   if ((dip1 == OFF) && (dip2 == ON)) nodeID = (EEProm.nodeID  & 0x3F) + 2;
   if ((dip1 == ON) && (dip2 == ON))  nodeID = (EEProm.nodeID  & 0x3F) + 3;
   
-  Serial.println(F("Settings:"));
   Serial.print(F("Group ")); Serial.print(EEProm.networkGroup);
   Serial.print(F(", Node ")); Serial.print(nodeID);
   Serial.print(F(", Band ")); 
@@ -72,7 +71,7 @@ static void list_calibration(void)
  
   Serial.print(F("pulses = ")); Serial.println(EEProm.pulse_enable);
   Serial.print(F("pulse period = ")); Serial.println(EEProm.pulse_period);
-  Serial.print(F("temp_enable = ")); Serial.println(EEProm.temperatureEnabled);
+  Serial.print(F("DS18B20 enabled = ")); Serial.println(EEProm.temperatureEnabled);
   printTemperatureSensorAddresses();
   Serial.println(EEProm.rf_on & 0x01 ? "RF on":"RF off");
   Serial.println(EEProm.rf_on & 0x02 ? "Serial on":"Serial off");
@@ -91,7 +90,7 @@ static void wipe_eeprom()
 {
   Serial.println(F("Resetting..."));
   eepromHide(eepromSig);   
-  Serial.println(F("Sketch will now restart using default config."));
+  Serial.println(F("emonTH restarting with default config."));
   delay(200);
 }
 
@@ -145,13 +144,11 @@ void getSettings(void)
  * 
  */
  
-  Serial.println("'+++' then [Enter] for config mode");
-  Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
-  delay(100);
-  Serial.println("waiting 5s...");
+  Serial.println("'+++' then [Enter] for config mode, waiting 2s...");
+  //Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
   start = millis();
 
-  while (millis() < (start + 5000))
+  while (millis() < (start + 2000))
   {
     // If serial input of keyword string '+++' is entered during 5s power-up then enter config mode
 
