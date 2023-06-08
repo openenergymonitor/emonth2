@@ -295,8 +295,9 @@ void setup()
       SI7021_status=1;
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
       Serial.print("SI7021 Started, ID: ");
-      Serial.println(deviceid);
+      Serial.println(deviceid); delay(100);
       Serial.print("temp:"); Serial.print(data.celsiusHundredths/100.0); Serial.print(",humidity:"); Serial.println(data.humidityBasisPoints/100.0);
+      delay(100);
     }
     else 
     {
