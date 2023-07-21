@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.3"};
+const char *firmware_version = {"4.1.4"};
 /*
 
   Change log:
+  V4.1.4   - (21/07/23) Serial print RF format  
   V4.1.3   - (05/06/23) Startup serial print streamline for factory test 
   V4.1.2   - (27/02/23) Add option to used custom encrpytion key
   V4.1.1   - (19/02/23) Fix missing frequency initialization
@@ -244,6 +245,13 @@ void setup()
     list_calibration();
     
 #ifdef RFM69CW
+    #if RadioFormat == RFM69_LOW_POWER_LABS
+      Serial.println("RadioFormat: LowPowerLabs");
+    #elif RadioFormat == RFM69_JEELIB_CLASSIC
+      Serial.println("RadioFormat: JeeLib Classic");
+    #elif RadioFormat == RFM69_JEELIB_NATIVE
+      Serial.println("RadioFormat: JeeLib Native");
+    #endif
     Serial.println("Init RFM...");
     #if RadioFormat == RFM69_LOW_POWER_LABS
       radio.initialize(EEProm.RF_freq,EEProm.nodeID,EEProm.networkGroup);  
