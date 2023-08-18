@@ -1,3 +1,5 @@
+<a class="btn" href="https://shop.openenergymonitor.com/emonth-temperature-humidity-node/">Buy in Shop</a>
+
 # Overview
 
 The emonTH V2 is an open-source, wireless, battery-powered temperature and humidity monitoring node.
