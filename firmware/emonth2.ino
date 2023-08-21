@@ -472,6 +472,7 @@ void loop()
       #endif
       dodelay(30);                                                     // wait for module to wakup
       #if RadioFormat == RFM69_LOW_POWER_LABS
+        radio.setAddress(nodeID);
         radio.send(5, (const void*)(&emonth), sizeof(emonth));
         radio.sleep();
       #else
