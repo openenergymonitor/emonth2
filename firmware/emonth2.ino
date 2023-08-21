@@ -35,6 +35,7 @@ const char *firmware_version = {"4.1.4"};
 /*
 
   Change log:
+  V4.1.5   - (21/08/23) Fix node ID DIP switch selection 
   V4.1.4   - (21/07/23) Serial print RF format  
   V4.1.3   - (05/06/23) Startup serial print streamline for factory test 
   V4.1.2   - (27/02/23) Add option to used custom encrpytion key
