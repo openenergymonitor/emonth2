@@ -144,11 +144,11 @@ void getSettings(void)
  * 
  */
  
-  Serial.println("'+++' then [Enter] for config mode, waiting 2s...");
+  Serial.println("'+++' then [Enter] for config mode, waiting 4s...");
   //Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
   start = millis();
 
-  while (millis() < (start + 2000))
+  while (millis() < (start + 4000))
   {
     // If serial input of keyword string '+++' is entered during 5s power-up then enter config mode
 
