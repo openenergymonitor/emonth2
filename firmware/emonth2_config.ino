@@ -252,7 +252,7 @@ void getSettings(void)
           break;
 
         case 'v': // print firmware version
-          Serial.print(F("EmonTH_V2 V")); Serial.write(firmware_version);
+          Serial.print(F("EmonTH_V2 V")); Serial.write(firmware_version);Serial.println("");
           break;
         
         case 'w' :  // Wireless / Serial - RF Off / On
