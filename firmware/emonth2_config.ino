@@ -69,12 +69,13 @@ static void list_calibration(void)
                EEProm.RF_freq == RF69_915MHZ ? 915 : 0);
   Serial.println(F(" MHz"));
  
-  Serial.print(F("pulses = ")); Serial.println(EEProm.pulse_enable);
-  Serial.print(F("pulse period = ")); Serial.println(EEProm.pulse_period);
+  Serial.print(F("pulses enabled = ")); Serial.println(EEProm.pulse_enable);
+  Serial.print(F("pulse period = ")); Serial.print(EEProm.pulse_period); Serial.println(" ms");
   Serial.print(F("DS18B20 enabled = ")); Serial.println(EEProm.temperatureEnabled);
   printTemperatureSensorAddresses();
   Serial.println(EEProm.rf_on & 0x01 ? "RF on":"RF off");
   Serial.println(EEProm.rf_on & 0x02 ? "Serial on":"Serial off");
+  Serial.print(F("RF power = "));Serial.print(EEProm.rfPower - 18);Serial.println(" dBm");
 }
 
 static void save_config()
@@ -143,6 +144,7 @@ void getSettings(void)
  *  [x] [y] [z] etc are values to be set.
  * 
  */
+  Serial.setTimeout(2000); //allow more time before serial timeout for multi-digit entry in parseInt() etc.
  
   Serial.println("'+++' then [Enter] for config mode, waiting 4s...");
   //Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
@@ -152,7 +154,7 @@ void getSettings(void)
   {
     // If serial input of keyword string '+++' is entered during 5s power-up then enter config mode
 
-    if (Serial.available())
+    if (Serial.available() >= 5) //wait until all keyword string captured before checking
     {
       if (!calibration_enable) 
       {
@@ -174,10 +176,16 @@ void getSettings(void)
     {
       char c = Serial.read();
       int k1;
-      double k2; 
+      double k2;
+      byte b;
+	  
       switch (c) {
         case 'b':  // set band: 4 = 433, 8 = 868, 9 = 915
-          EEProm.RF_freq = bandToFreq(Serial.parseInt());
+          b = bandToFreq(Serial.parseInt());
+          if(b) //don't update if invalid band
+          {
+            EEProm.RF_freq = b;
+          }
           Serial.print(EEProm.RF_freq == RF69_433MHZ ? 433 : 
                        EEProm.RF_freq == RF69_868MHZ ? 868 :
                        EEProm.RF_freq == RF69_915MHZ ? 915 : 0);
@@ -252,7 +260,7 @@ void getSettings(void)
           break;
 
         case 'v': // print firmware version
-          Serial.print(F("EmonTH_V2 V")); Serial.write(firmware_version);
+          Serial.print(F("EmonTH_V2 V")); Serial.write(firmware_version);Serial.println("");
           break;
         
         case 'w' :  // Wireless / Serial - RF Off / On
