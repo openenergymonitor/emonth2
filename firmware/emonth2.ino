@@ -383,6 +383,12 @@ void setup()
   power_timer1_disable();
   // power_timer0_disable();                                           //don't disable necessary for the DS18B20 library
   #endif
+  //turn off pullups on dip switches set to 0V (50k-20k pullup so 66uA-165uA per pin at 3.3V)
+  if (!dip1)
+    pinMode(DIP_switch1, INPUT);
+  if (!dip2)
+    pinMode(DIP_switch2, INPUT);
+
   // Only turn off LED if sensor is working
   if (SI7021_status)
   {
