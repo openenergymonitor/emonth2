@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.5"};
+const char *firmware_version = {"4.1.6"};
 /*
 
   Change log:
+  V4.1.6   - (26/02/24) Fix DS18B20 serial printing & multiple sensors 
   V4.1.5   - (21/08/23) Fix node ID DIP switch selection 
   V4.1.4   - (21/07/23) Serial print RF format  
   V4.1.3   - (05/06/23) Startup serial print streamline for factory test 
@@ -115,9 +116,8 @@ const unsigned long PULSE_MAX_NUMBER = 100;                            // Data s
 
 #define REG_SYNCVALUE1 0x2F
 #define MAX_SENSORS 4                                                  // The maximum number of external temperature sensors.
-                                                                       // (Only the first will be sent by radio without further changes.)
-                                                                       
-#define EXTERNAL_TEMP_SENSORS 1                                        // Specify number of external temperature sensors that are connected                                                                      
+                                                                                                                                      
+#define EXTERNAL_TEMP_SENSORS 1                                        // Specify number of external temperature sensors connected                                                                      
                                                                        
 #define FACTORYTESTGROUP 1                                             // Transmit the Factory Test on Grp 1 
                                                                        //   to avoid interference with recorded data at power-up.
@@ -345,18 +345,34 @@ void setup()
   if (EEProm.allAddresses[0][0] != 0x28)                               // 0x28 = signature of a DS18B20, so a pre-existing array - do not search for sensors
     while ((j < numSensors) && (oneWire.search(EEProm.allAddresses[j]))) 
       j++;
-
-  digitalWrite(DS18B20_PWR, LOW);
-
-  // if (numSensors) 
-  // {
-  //   Serial.print(numSensors); 
-  //   Serial.println(" DS18B20");
-  // }
-  // else
-  //   Serial.println("No DS18B20");
-  // Serial.println("");
-
+  
+  
+  // Inital read from DS18B20
+  if (numSensors && EEProm.temperatureEnabled)
+  {
+    digitalWrite(DS18B20_PWR, HIGH); dodelay(50);
+    for(int j=0;j<numSensors;j++) 
+       sensors.setResolution(EEProm.allAddresses[j], TEMPERATURE_PRECISION);      // and set the a to d conversion resolution of each.
+       sensors.requestTemperatures();                                             // Send the command to get temperatures
+       dodelay(ASYNC_DELAY);                                                      //Must wait for conversion, since we use ASYNC mode
+      
+    for(int j=0;j<EXTERNAL_TEMP_SENSORS;j++) {
+       float temp=(sensors.getTempC(EEProm.allAddresses[j]));
+       if ((temp < 125.0) && (temp > -40.0)) {
+         emonth.temp_external[j] = (temp*10);
+       }
+     }
+      digitalWrite(DS18B20_PWR, LOW);
+   }
+  
+  // Print inital DS18B20 sensor readings 
+  if (numSensors)
+  {
+    printTemperatureSensorAddresses();
+    for(int j=0;j<EXTERNAL_TEMP_SENSORS;j++) {
+      Serial.print("tempex");Serial.print(j);Serial.print(":");Serial.print(emonth.temp_external[j]); Serial.println(",");
+    }
+  }
 
 
   //################################################################################################################################

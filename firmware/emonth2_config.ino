@@ -72,7 +72,6 @@ static void list_calibration(void)
   Serial.print(F("pulses enabled = ")); Serial.println(EEProm.pulse_enable);
   Serial.print(F("pulse period = ")); Serial.print(EEProm.pulse_period); Serial.println(" ms");
   Serial.print(F("DS18B20 enabled = ")); Serial.println(EEProm.temperatureEnabled);
-  printTemperatureSensorAddresses();
   Serial.println(EEProm.rf_on & 0x01 ? "RF on":"RF off");
   Serial.println(EEProm.rf_on & 0x02 ? "Serial on":"Serial off");
   Serial.print(F("RF power = "));Serial.print(EEProm.rfPower - 18);Serial.println(" dBm");
@@ -147,6 +146,7 @@ void getSettings(void)
   Serial.setTimeout(2000); //allow more time before serial timeout for multi-digit entry in parseInt() etc.
  
   Serial.println("'+++' then [Enter] for config mode, waiting 4s...");
+  Serial.println(EEProm.rf_on & 0x02 ? "Serial on":"Serial print off");
   //Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
   start = millis();
 
@@ -168,6 +168,7 @@ void getSettings(void)
       }
     }
   }
+  
 
   
   while (calibration_enable)
