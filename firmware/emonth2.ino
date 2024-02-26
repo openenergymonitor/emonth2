@@ -69,7 +69,7 @@ const char *firmware_version = {"4.1.6"};
     [[23]]
       nodename = emonth2_23
       [[[rx]]]
-         names = temperature, external temperature, humidity, battery, pulseCount
+         names = temperature, external temperature, humidity, battery, pulsecount
          datacodes = h,h,h,h,L
          scales = 0.1,0.1,0.1,0.1,1
          units = C,C,%,V,p
