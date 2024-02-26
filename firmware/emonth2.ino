@@ -65,15 +65,27 @@ const char *firmware_version = {"4.1.6"};
   emonhub.conf node decoder:
   See: https://github.com/openenergymonitor/emonhub/blob/emon-pi/configuration.md
 
+   For 1x external sensor (default):
     [[23]]
-      nodename = emonTH_5
-      firmware = V2.x_emonTH_DHT22_DS18B20_RFM69CW_Pulse
-      hardware = emonTH_(Node_ID_Switch_DIP1:OFF_DIP2:OFF)
+      nodename = emonth2_23
       [[[rx]]]
          names = temperature, external temperature, humidity, battery, pulseCount
          datacodes = h,h,h,h,L
          scales = 0.1,0.1,0.1,0.1,1
          units = C,C,%,V,p
+   
+   For 4x external sensors  (#define EXTERNAL_TEMP_SENSORS 4):
+   
+    [[23]]
+        nodename = emonth2_23
+        [[[rx]]]
+            names = temperature, external temperature1, external temperature2, external temperature3, external temperature4, humidity, battery, pulsecount
+            datacodes = h, h, h, h, h, h, h, L
+            scales = 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0
+            units = C, C, C, C, C, %, V, p    
+         
+         
+         
   */
 // -------------------------------------------------------------------------------------------------------------
 
