@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.6"};
+const char *firmware_version = {"4.1.7"};
 /*
 
   Change log:
+  V4.1.7   - (05/03/24) Fix node ID DIP switch selection (again)
   V4.1.6   - (26/02/24) Fix DS18B20 serial printing & multiple sensors 
   V4.1.5   - (21/08/23) Fix node ID DIP switch selection 
   V4.1.4   - (21/07/23) Serial print RF format  
@@ -267,7 +268,7 @@ void setup()
     #endif
     Serial.println("Init RFM...");
     #if RadioFormat == RFM69_LOW_POWER_LABS
-      radio.initialize(EEProm.RF_freq,EEProm.nodeID,EEProm.networkGroup);  
+      radio.initialize(EEProm.RF_freq,nodeID,EEProm.networkGroup);  
       #ifndef RFM69_LPL_AES_ENCRYPTION_KEY
       radio.encrypt("89txbe4p8aik5kt3");                                                      // initialize RFM
       #else
