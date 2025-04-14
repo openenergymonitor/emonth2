@@ -143,14 +143,14 @@ void getSettings(void)
  *  [x] [y] [z] etc are values to be set.
  * 
  */
-  Serial.setTimeout(2000); //allow more time before serial timeout for multi-digit entry in parseInt() etc.
- 
-  Serial.println("'+++' then [Enter] for config mode, waiting 4s...");
-  Serial.println(EEProm.rf_on & 0x02 ? "Serial on":"Serial print off");
+  Serial.setTimeout(1000); //allow more time before serial timeout for multi-digit entry in parseInt() etc.
+   Serial.println(EEProm.rf_on & 0x02 ? "Serial on":"Serial print off");
+
+  Serial.println("'+++' then [Enter] for config mode, waiting 3s...");
   //Serial.println("(Arduino IDE Serial Monitor: make sure 'Both NL & CR' is selected)");
   start = millis();
 
-  while (millis() < (start + 4000))
+  while (millis() < (start + 3000))
   {
     // If serial input of keyword string '+++' is entered during 5s power-up then enter config mode
 
@@ -169,7 +169,12 @@ void getSettings(void)
     }
   }
   
-
+  if (!calibration_enable)
+  {
+    Serial.println(F("Continuing without entering config mode..."));
+    delay(50);
+    return;
+  }
   
   while (calibration_enable)
   {

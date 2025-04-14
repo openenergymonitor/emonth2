@@ -145,9 +145,9 @@ struct
   byte  rf_on = 1;                                                     // RF/Serial output. Bit 0 set: RF on, bit 1 set: serial on.
   byte  rfPower = 25;                                                  // 0 - 31 = -18 dBm (min value) - +13 dBm (max value). RFM12B equivalent: 25 (+7 dBm)
                                                                        //    lower power means increased battery life
-  bool  pulse_enable = true;                                           // Pulse counting
+  bool  pulse_enable = false;                                          // Pulse counting
   int   pulse_period = 50;                                             // Pulse min period - 0 = no de-bounce
-  bool  temperatureEnabled = true;                                     // Enable external temperature measurement
+  bool  temperatureEnabled = false;                                    // Enable external temperature measurement
   DeviceAddress allAddresses[MAX_SENSORS];                             // External sensor address data
 } EEProm;
 
@@ -285,20 +285,18 @@ void setup()
     Serial.println("RFM Started");
 
     // Send RFM69CW test sequence (for factory testing)
+    #if RadioFormat != RFM69_LOW_POWER_LABS
     for (int i = 10; i> -1; i--)
     {
       emonth.temp=i;
-      #if RadioFormat == RFM69_LOW_POWER_LABS
-        // radio.send(5, (const void*)(&emonth), sizeof(emonth));
-        // radio.sleep();
-      #else
-        rfm_send((byte *)&emonth, sizeof(emonth), FACTORYTESTGROUP, nodeID, EEProm.RF_freq, EEProm.rfPower, busyThreshold, busyTimeout);
-      #endif
+      rfm_send((byte *)&emonth, sizeof(emonth), FACTORYTESTGROUP, nodeID, EEProm.RF_freq, EEProm.rfPower, busyThreshold, busyTimeout);
       delay(100);
     }
     emonth.temp = 0;
     // end of factory test sequence
+    #endif
   }
+
 
   pinMode(DS18B20_PWR,OUTPUT);
   pinMode(BATT_ADC, INPUT);
@@ -518,7 +516,7 @@ void loop()
           radio.setAddress(nodeID);
           last_nodeID = nodeID;
         }
-        radio.send(5, (const void*)(&emonth), sizeof(emonth));
+        radio.send_csma(5, (const void*)(&emonth), sizeof(emonth), busyTimeout);
         radio.sleep();
       #else
         rfm_send((byte *)&emonth, sizeof(emonth), EEProm.networkGroup, nodeID, EEProm.RF_freq, EEProm.rfPower, busyThreshold, busyTimeout);
