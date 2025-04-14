@@ -213,8 +213,9 @@ void getSettings(void)
            */
           k1 = Serial.parseInt(); 
           k2 = Serial.parseFloat(); 
-          while (Serial.available())
+          while (Serial.available()) {
             Serial.read(); 
+          }
 
           switch (k1) {
             case 0 : EEProm.pulse_enable = false;
@@ -274,8 +275,9 @@ void getSettings(void)
           
         case 'x':  // exit and continue
           Serial.println(F("Continuing..."));
-          while (Serial.available())
+          while (Serial.available()) {
             Serial.read(); 
+          }
           calibration_enable = false;
           delay(10);
           break;
@@ -288,8 +290,9 @@ void getSettings(void)
         default:
           ;
       } //end switch
-      while (Serial.available())
-        Serial.read(); 
+      while (Serial.available()) {
+        Serial.read();
+      } 
     }
   }
 }

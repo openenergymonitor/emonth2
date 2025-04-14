@@ -31,16 +31,17 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.7"};
+const char *firmware_version = {"4.1.8"};
 /*
 
   Change log:
+  V4.1.8   - (28/03/25) Use of minimal RFM69_LPL library to add while loop timeouts (issue unclear)
   V4.1.7   - (05/03/24) Fix node ID DIP switch selection (again)
   V4.1.6   - (26/02/24) Fix DS18B20 serial printing & multiple sensors 
   V4.1.5   - (21/08/23) Fix node ID DIP switch selection 
   V4.1.4   - (21/07/23) Serial print RF format  
   V4.1.3   - (05/06/23) Startup serial print streamline for factory test 
-  V4.1.2   - (27/02/23) Add option to used custom encrpytion key
+  V4.1.2   - (27/02/23) Add option to used custom encryption key
   V4.1.1   - (19/02/23) Fix missing frequency initialization
   V4.1.0   - (17/02/23) LowPowerLabs radio format option
   V4.0.0   - (10/07/21) Replace JeeLib with OEM RFM69nTxLib using RFM69 "Native" packet format, add emonEProm library support
@@ -50,17 +51,17 @@ const char *firmware_version = {"4.1.7"};
   V3.2.2   - (12/05/17) Fix DIP switch nodeID not being read when EEPROM is configures
   V3.2.1   - (30/11/16) Fix emonTx port typo
   V3.2.0   - (13/11/16) Run-time serial nodeID config
-  V3.1.0   - (19/10/16) Test for RFM69CW and SI7021 at startup, allow serial use without RF prescent
+  V3.1.0   - (19/10/16) Test for RFM69CW and SI7021 at startup, allow serial use without RF precent
   V3.0.0   - (xx/10/16) Add support for SI7021 sensor instead of DHT22 (emonTH V2.0 hardware)
   ^^^ emonTH V2.0 hardware ^^^
-  V2.7   - (15/09/16) Serial print serial pairs for emonesp compatiable e.g. temp:210,humidity:56
-  V2.6   - (24/10/15) Tweek RF transmission timmng to help reduce RF packet loss
+  V2.7   - (15/09/16) Serial print serial pairs for EmonEsp compatible e.g. temp:210,humidity:56
+  V2.6   - (24/10/15) Tweek RF transmission timing to help reduce RF packet loss
   V2.5   - (23/10/15) default nodeID 23 to enable new emonHub.conf decoder for pulseCount packet structure
   V2.4   - (15/10/15) activate pulse count pin input pullup to stop spurious pulses when no sensor connected
   v2.3.1 - (12/10/14) don't flash LED on RF transmission to save power
   v2.3   - rebuilt based on low power pulse counting code by Eric Amann: http://openenergymonitor.org/emon/node/10834
   v2.2   - 60s RF transmit period now uses timer1, pulse events are decoupled from RF transmit
-  v2.4   - 5 min default transmisson time = 300 ms
+  v2.4   - 5 min default transmission time = 300 ms
   v2.1   - Branched from emonTH_DHT22_DS18B20 example, first version of pulse counting version
  -------------------------------------------------------------------------------------------------------------
   emonhub.conf node decoder:
@@ -109,7 +110,7 @@ const unsigned long PULSE_MAX_NUMBER = 100;                            // Data s
 #define RFM69CW                                                        // Use the RFM69CW radio
 
 #if RadioFormat == RFM69_LOW_POWER_LABS
-  #include <RFM69.h>                             // RFM69 LowPowerLabs radio library
+  #include <RFM69_LPL.h>                             // RFM69 LowPowerLabs radio library
 #elif RadioFormat == RFM69_JEELIB_CLASSIC
   #include <rfmTxLib.h>                          // RFM69 transmit-only library using "JeeLib RFM69 Native" message format
 #elif RadioFormat == RFM69_JEELIB_NATIVE
@@ -153,6 +154,7 @@ struct
 uint16_t eepromSig = 0xFF06;                                           // 'Experimental' signature - see oemEProm Library documentation for details.
 bool calibration_enable = false;                                       // Start with calibration disabled
 byte nodeID = EEProm.nodeID;
+byte last_nodeID = 0;                                                  // Last node ID used for RFM69CW
 const int busyThreshold = -97;                                         // Signal level below which the radio channel is clear to transmit
 const byte busyTimeout = 0;                                            // Time in ms to wait for the channel to become clear, before transmitting anyway. Set to zero to
                                                                        //   inhibit channel occupancy check (conserves battery life but increases the risk of lost messages)
@@ -274,7 +276,7 @@ void setup()
       #else
       radio.encrypt(RFM69_LPL_AES_ENCRYPTION_KEY);                                            // initialize RFM
       #endif
-      radio.setPowerLevel(EEProm.rfPower);
+      // radio.setPowerLevel(EEProm.rfPower);
     #else
       rfm_init();                                                        // initialize RFM
     #endif
@@ -355,20 +357,23 @@ void setup()
     }
   }
   byte j=0;                                                            // search for one wire devices and copy to device address array.
-  if (EEProm.allAddresses[0][0] != 0x28)                               // 0x28 = signature of a DS18B20, so a pre-existing array - do not search for sensors
-    while ((j < numSensors) && (oneWire.search(EEProm.allAddresses[j]))) 
+  if (EEProm.allAddresses[0][0] != 0x28) {                             // 0x28 = signature of a DS18B20, so a pre-existing array - do not search for sensors
+    while ((j < numSensors) && (oneWire.search(EEProm.allAddresses[j]))) {
       j++;
+    }
+  }
   
   
   // Inital read from DS18B20
   if (numSensors && EEProm.temperatureEnabled)
   {
     digitalWrite(DS18B20_PWR, HIGH); dodelay(50);
-    for(int j=0;j<numSensors;j++) 
+    for(int j=0;j<numSensors;j++) {
        sensors.setResolution(EEProm.allAddresses[j], TEMPERATURE_PRECISION);      // and set the a to d conversion resolution of each.
        sensors.requestTemperatures();                                             // Send the command to get temperatures
        dodelay(ASYNC_DELAY);                                                      //Must wait for conversion, since we use ASYNC mode
-      
+    }
+
     for(int j=0;j<EXTERNAL_TEMP_SENSORS;j++) {
        float temp=(sensors.getTempC(EEProm.allAddresses[j]));
        if ((temp < 125.0) && (temp > -40.0)) {
@@ -458,8 +463,9 @@ void loop()
     if (numSensors && EEProm.temperatureEnabled)
     {
       digitalWrite(DS18B20_PWR, HIGH); dodelay(50);
-      for(int j=0;j<numSensors;j++) 
+      for(int j=0;j<numSensors;j++) {
         sensors.setResolution(EEProm.allAddresses[j], TEMPERATURE_PRECISION);      // and set the a to d conversion resolution of each.
+      }
       sensors.requestTemperatures();                                   // Send the command to get temperatures
       dodelay(ASYNC_DELAY);                                            //Must wait for conversion, since we use ASYNC mode
       
@@ -508,7 +514,10 @@ void loop()
       #endif
       dodelay(30);                                                     // wait for module to wakup
       #if RadioFormat == RFM69_LOW_POWER_LABS
-        radio.setAddress(nodeID);
+        if (last_nodeID != nodeID) {
+          radio.setAddress(nodeID);
+          last_nodeID = nodeID;
+        }
         radio.send(5, (const void*)(&emonth), sizeof(emonth));
         radio.sleep();
       #else
@@ -526,7 +535,6 @@ void loop()
       dodelay(100);
       digitalWrite(LED,LOW);
     }
-
 
     if (EEProm.rf_on & 0x02)
     {
