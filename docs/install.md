@@ -67,7 +67,29 @@ The standard emonTH2 firmware supports connecting one external DS18B20 temperatu
 
 ![](img/emonth_external_ds18b20.jpg)
 
-Alternative firmware is available that supports multiple external temperature sensors which can be useful for applications such as measuring the flow and return temperatures on a heat pump or radiator balancing, see [https://github.com/openenergymonitor/emonth2/tree/multiple_ds18b20_external](https://github.com/openenergymonitor/emonth2/tree/multiple_ds18b20_external).
+### Multiple temperature sensors
+
+The master branch supports multiple external DS18B20 sensors. It is configured to only read and publish the output of the first sensor by default.
+
+In order to add more sensors, you need to do four separate things.
+
+1. Connect the additional sensors on the terminals
+2. Modify the source files
+   1. Check out the repository and open `emonth2.ino`. 
+   2. Then Increase the value of `EXTERNAL_TEMP_SENSORS` to match the number of connected sensors here [https://github.com/openenergymonitor/emonth2/blob/master/firmware/emonth2.ino#L134]
+   3. Upload the firmware with `pio run -t upload`
+3. Update the sensor configuration in EMonHub to match your number of external sensors. For example, for two external sensors change it like this, by adding an additional external temperature under `names`, `datacodes` and `scales`:
+```
+    [[25]]
+        nodename = emonth2_25
+        [[[rx]]]
+            names = temperature, external temperature 1, external temperature 2, humidity, battery, pulsecount
+            datacodes = h, h, h, h, h, L
+            scales = 0.1, 0.1, 0.1, 0.1, 0.1, 1.0
+            units = C, C, %, V, p
+```
+4. You may need to change the setting for enabling/disabling the external probes on the serial console by hitting `+++` and `enter` after a reset and entering `t0 1` after the prompt
+
 
 ## Add: External optical pulse sensor
 
