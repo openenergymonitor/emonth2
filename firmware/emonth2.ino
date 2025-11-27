@@ -318,7 +318,7 @@ void setup()
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
       Serial.print("SI7021 Started, ID: ");
       Serial.println(deviceid); delay(100);
-      Serial.print("temp:"); Serial.print(data.celsiusHundredths/100.0); Serial.print(",humidity:"); Serial.println(data.humidityBasisPoints/100.0);
+      Serial.print("temp:"); Serial.print(data.celsiusHundredths/100.0); Serial.print(",humidity:"); Serial.println(int(data.humidityBasisPoints)/100.0);
       delay(100);
     }
     else 
@@ -497,7 +497,7 @@ void loop()
       #endif
       si7021_env data = SI7021_sensor.getHumidityAndTemperature();
       emonth.temp = (data.celsiusHundredths*0.1);
-      emonth.humidity = (data.humidityBasisPoints*0.1);
+      emonth.humidity = (int(data.humidityBasisPoints)*0.1);
       #ifndef ATTINY
       power_twi_disable();
       #endif
