@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.2.0"};
+const char *firmware_version = {"4.2.1"};
 /*
 
   Change log:
+  v4.2.1   - (09/12/25) Fix option to change frequency via serial config
   v4.2.0   - (09/12/25) Change transmit frequency to 433.92 MHz
   V4.1.8   - (28/03/25) Use of minimal RFM69_LPL library to add while loop timeouts (issue unclear)
   V4.1.7   - (05/03/24) Fix node ID DIP switch selection (again)
