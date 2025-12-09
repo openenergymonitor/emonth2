@@ -22,7 +22,7 @@ const PROGMEM char helpText[] =
 "  ?         - show this text again\n"
 "\n"
 "  w<x>      - turn RFM Wireless / Serial data both off: x = 0, wireless only: x=1, serial only: x=2 or both: x = 3\n"
-// "  b<n>      - set r.f. band n = a single numeral: 4 = 433MHz, 8 = 868MHz, 9 = 915MHz (may require hardware change)\n"
+"  b<n>      - set r.f. band n = a single numeral: 4 = 433MHz, 49 = 433.92MHz, 8 = 868MHz, 9 = 915MHz (may require hardware change)\n"
 "  p<nn>     - set the r.f. power. nn - an integer 0 - 31 representing -18 dBm to +13 dBm. Default: 25 (+7 dBm)\n"
 "  g<nnn>    - set Network Group  nnn - an integer (OEM default = 210)\n"
 "  n<nn>     - set node ID n= an integer (standard node ids are 1..60)\n"
@@ -187,21 +187,18 @@ void getSettings(void)
       byte b;
 	  
       switch (c) {
-        /*
-        // Removed: hardware is fixed frequency.
-        // if fitting another radio module change this via firmware upload
-        case 'b':  // set band: 4 = 433, 8 = 868, 9 = 915
+        case 'b':  // set band: 4 = 433, 49 = 433.92, 8 = 868, 9 = 915
           b = bandToFreq(Serial.parseInt());
           if(b) //don't update if invalid band
           {
             EEProm.RF_freq = b;
           }
           Serial.print(EEProm.RF_freq == RF69_433MHZ ? 433 : 
+                       EEProm.RF_freq == RF69_433_92MHZ ? 433.92 :
                        EEProm.RF_freq == RF69_868MHZ ? 868 :
                        EEProm.RF_freq == RF69_915MHZ ? 915 : 0);
           Serial.println(F(" MHz"));
           break;
-        */
         case 'g':  // set network group
           EEProm.networkGroup = Serial.parseInt();
           Serial.print(F("Group ")); Serial.println(EEProm.networkGroup);
@@ -307,9 +304,9 @@ void getSettings(void)
 }
 
 
-// static byte bandToFreq (byte band) {
-//  return band == 4 ? RF69_433MHZ : band == 8 ? RF69_868MHZ : band == 9 ? RF69_915MHZ : 0;
-// }
+static byte bandToFreq (byte band) {
+  return band == 4 ? RF69_433MHZ : band == 49 ? RF69_433_92MHZ : band == 8 ? RF69_868MHZ : band == 9 ? RF69_915MHZ : 0;
+}
 
 
 static void showString (PGM_P s) {
