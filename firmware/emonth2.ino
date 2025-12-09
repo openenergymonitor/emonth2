@@ -31,10 +31,11 @@
   -------------------------------------------------------------------------------------------------------------
   */
 
-const char *firmware_version = {"4.1.8"};
+const char *firmware_version = {"4.2.0"};
 /*
 
   Change log:
+  v4.2.0   - (09/12/25) Change transmit frequency to 433.92 MHz
   V4.1.8   - (28/03/25) Use of minimal RFM69_LPL library to add while loop timeouts (issue unclear)
   V4.1.7   - (05/03/24) Fix node ID DIP switch selection (again)
   V4.1.6   - (26/02/24) Fix DS18B20 serial printing & multiple sensors 
@@ -139,7 +140,7 @@ const unsigned long PULSE_MAX_NUMBER = 100;                            // Data s
 //---------------------------- emonTH Settings - Stored in EEPROM and shared with config.ino ------------------------------------------------
 struct 
 {
-  byte RF_freq = RF69_433MHZ;                                          // Frequency of radio module can be RF69_433MHZ, RF69_868MHZ or RF69_915MHZ. 
+  byte RF_freq = RF69_433_92MHZ;                                       // Frequency of radio module can be RF69_433MHZ, RF69_868MHZ or RF69_915MHZ. 
   byte networkGroup = 210;                                             // Wireless network group, must be the same as emonBase / emonPi and emonGLCD. OEM default is 210
   byte  nodeID = 23;                                                   // Node ID for this sensor.
   byte  rf_on = 1;                                                     // RF/Serial output. Bit 0 set: RF on, bit 1 set: serial on.
