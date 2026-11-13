@@ -8,6 +8,10 @@ The emonTH2 firmware is based on Arduino.
 
 **New:** Support for three different radio formats is available: JeeLib Classic, JeeLib Native and **LowPowerLabs**.
 
+Newer firmware which mentions 433.92 MHz in the description is for compatibility with the emonPi3 devices. This will not work with older devices; flash the LowPowerLabs firmware **without** 433.92 MHz in the description.
+
+By default, ordering a device from the store will come with this firmware. Make sure you let the store know if you require a different firmware. If you forget, you will need a USB to UART cable as below, and to flash the correct firmware yourself. 
+
 ## Updating firmware using an emonPi/emonBase
 
 The easiest way of updating the emonTh2 firmware is to connect it to an emonPi or emonBase with a USB to UART cable and then use the firmware upload tool available at `Setup > Admin > Update > Firmware`.
